@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
+<meta name="theme-color" content="#111111"/>
+<title>Paleta Smart Route — tablet</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;font-family:Arial,Helvetica,sans-serif;background:#111;color:#111;overflow:hidden}
+#app{height:100vh;height:100dvh;display:flex;flex-direction:column;background:#f5f2ea}
+.top{background:linear-gradient(135deg,#111,#2b1600);color:#fff;padding:14px 16px;border-bottom:5px solid #f37021;flex-shrink:0}
+.top h1{margin:0;font-size:21px;text-transform:uppercase;letter-spacing:.2px}
+.top p{margin:5px 0 0;font-size:12px;color:#eee}
+.status{display:flex;gap:8px;align-items:center;margin-top:8px;font-size:12px;font-weight:900;color:#ffd400}
+.dot{width:11px;height:11px;border-radius:50%;background:#777}
+.dot.on{background:#4CAF50;box-shadow:0 0 0 4px rgba(76,175,80,.18)}
+.main{flex:1;overflow:hidden;display:flex;flex-direction:column}
+.screen{display:none;flex:1;overflow:auto;padding:12px}
+.screen.active{display:block}
+.card{background:#fff;border:2px solid #d8d4ca;border-left:8px solid #f37021;border-radius:10px;padding:13px;margin-bottom:10px;box-shadow:0 2px 0 rgba(0,0,0,.08)}
+.card.red{border-left-color:#d71920}
+h2{font-size:19px;margin:0 0 8px}
+.small{font-size:13px;color:#555;line-height:1.35}
+.big{font-size:32px;line-height:1;font-weight:1000;color:#d71920}
+input{width:100%;padding:14px;border:2px solid #ccc;border-radius:8px;font-size:21px;font-weight:900}
+button{border:0;border-radius:8px;padding:14px 12px;font-size:15px;font-weight:1000;text-transform:uppercase;background:linear-gradient(90deg,#f37021,#ffd400);color:#111;box-shadow:0 3px 0 rgba(0,0,0,.25)}
+button.full{width:100%;margin-top:9px}
+button.dark{background:#111;color:#ffd400}
+button.red{background:linear-gradient(90deg,#d71920,#f37021);color:#fff}
+.row{display:flex;gap:8px}
+.row button{flex:1}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.stat{background:#111;color:#ffd400;border-radius:8px;padding:11px;text-align:center;font-weight:1000;font-size:20px}
+.stat span{display:block;color:#fff;font-size:11px;margin-top:3px}
+.map{height:315px;background:#ddd;border:4px solid #111;border-radius:12px;position:relative;overflow:hidden;background-image:linear-gradient(90deg,rgba(0,0,0,.06) 1px,transparent 1px),linear-gradient(rgba(0,0,0,.06) 1px,transparent 1px);background-size:24px 24px}
+.entrance{position:absolute;left:38%;bottom:2%;width:24%;height:24px;background:#111;color:#ffd400;text-align:center;font-size:11px;font-weight:900;padding-top:5px;border-radius:6px 6px 0 0}
+.shelf{position:absolute;width:26%;height:70px;background:#fff;border:3px solid #111;border-left:8px solid #f37021;border-radius:8px;padding:7px;font-size:12px;font-weight:1000;text-align:center}
+.shelf.active{outline:5px solid #ffd400;background:#fff4b8}
+.shelf.done{background:#e8f5e9;opacity:.75}
+.path{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none}
+.path line{stroke:#d71920;stroke-width:5;stroke-linecap:round;stroke-dasharray:10 8}
+.path circle{fill:#d71920}
+.pallet{height:210px;background:#c28b52;border:5px solid #6f431d;border-radius:10px;position:relative;overflow:hidden;margin-top:8px}
+.box{position:absolute;background:#fff;border:2px solid #111;border-radius:4px;text-align:center;font-size:9px;font-weight:900;display:flex;align-items:center;justify-content:center;box-shadow:2px 2px 0 rgba(0,0,0,.25)}
+.box.done{opacity:.25}
+.box.philips{background:#fff6d6}.box.ledvance{background:#e3f2fd}.box.specjalne{background:#ffe6e6}.box.radium{background:#e8f5e9}
+.progress{height:19px;background:#ddd;border-radius:30px;overflow:hidden;border:1px solid #aaa}
+.bar{height:100%;background:linear-gradient(90deg,#f37021,#ffd400);width:0%}
+.eanbox{background:#111;color:#ffd400;border-radius:8px;padding:10px;font-family:monospace;font-size:18px;font-weight:1000;text-align:center;margin:8px 0}
+.product{border:1px solid #ddd;background:#fafafa;border-radius:8px;padding:9px;margin:7px 0}
+.product.done{background:#e8f5e9;opacity:.65}
+.product.next{outline:3px solid #ffd400;background:#fff8cf}
+.toast{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:30;background:#111;color:#ffd400;border:2px solid #ffd400;border-radius:12px;padding:12px 16px;font-weight:1000;display:none;max-width:92%;text-align:center}
+.nav{display:flex;gap:1px;background:#111;border-top:4px solid #ffd400;flex-shrink:0}
+.nav button{flex:1;border-radius:0;box-shadow:none;background:#222;color:#fff;font-size:11px;padding:11px 4px}
+.nav button.active{background:#ffd400;color:#111}
+.warning{background:#fff0f0;border:2px solid #d71920;color:#8b1010;border-radius:8px;padding:10px;font-weight:900;margin-top:8px;display:none}
+@media(min-width:700px){
+  #app{max-width:900px;margin:auto}
+  .screen{padding:18px}
+  .tablet-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:12px}
+  .map{height:430px}
+}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="top">
+    <h1>Paleta Smart Route</h1>
+    <p>Tablet tutorial — paleta → EAN z góry → regał → kontrola błędów</p>
+    <div class="status"><span class="dot" id="micDot"></span><span id="micStatus">Mikrofon wyłączony</span></div>
+  </div>
+
+  <div class="main">
+    <section id="start" class="screen active">
+      <div class="card red">
+        <h2>Rozpocznij grę</h2>
+        <p class="small">Apka będzie gadać do pracownika od początku. Najpierw poprosi o numer palety, potem o pierwszy EAN z góry palety.</p>
+        <button class="full red" onclick="startGame()">Rozpocznij grę</button>
+      </div>
+      <div class="card">
+        <h2>Numer palety</h2>
+        <input id="palletNo" value="PAL-TUTORIAL-3000" onkeydown="if(event.key==='Enter')loadPallet()"/>
+        <button class="full" onclick="loadPallet()">Wczytaj paletę</button>
+      </div>
+      <div class="card">
+        <h2>Zasada</h2>
+        <p class="small">Nie jedziemy ślepo po trasie. Pracownik podaje EAN z góry palety, żeby nie rozkładać całej palety. Apka prowadzi do regału tego EAN-u i pilnuje, żeby nie mieszać regałów.</p>
+      </div>
+    </section>
+
+    <section id="mapScreen" class="screen">
+      <div class="tablet-grid">
+        <div class="card">
+          <h2>Wirtualny sklep z góry</h2>
+          <div class="map" id="storeMap">
+            <svg class="path" id="pathSvg" viewBox="0 0 100 100" preserveAspectRatio="none"></svg>
+            <div class="entrance">START</div>
+          </div>
+        </div>
+        <div>
+          <div class="card">
+            <h2>Paleta</h2>
+            <div class="grid">
+              <div class="stat" id="leftUnits">3000<span>sztuk zostało</span></div>
+              <div class="stat" id="leftEans">0<span>EAN zostało</span></div>
+              <div class="stat" id="cartons">0<span>kartonów</span></div>
+              <div class="stat">4<span>regały</span></div>
+            </div>
+            <div class="pallet" id="palletVisual"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="work" class="screen">
+      <div class="tablet-grid">
+        <div>
+          <div class="card red">
+            <h2>Aktualne zadanie</h2>
+            <div class="progress"><div class="bar" id="bar"></div></div>
+            <p class="small" id="progressText">Postęp: 0%</p>
+            <div id="task"></div>
+            <div class="warning" id="warning"></div>
+            <div class="row">
+              <button class="red" onclick="toggleMic()" id="micBtn">Włącz mikrofon</button>
+              <button onclick="demoSayNext()">Demo: powiedz dobry EAN</button>
+            </div>
+            <button class="full dark" onclick="demoSayWrong()">Demo: powiedz EAN z innego regału</button>
+          </div>
+        </div>
+        <div class="card">
+          <h2>Towary na aktualnym regale</h2>
+          <div id="currentList"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="summary" class="screen">
+      <div class="card red">
+        <h2>Koniec palety</h2>
+        <div class="big">MISJA WYKONANA</div>
+        <p class="small" id="summaryText"></p>
+        <button class="full" onclick="resetAll()">Reset demo</button>
+      </div>
+    </section>
+  </div>
+
+  <div class="nav">
+    <button onclick="show('start')">Start</button>
+    <button onclick="show('mapScreen')">Mapa</button>
+    <button onclick="show('work')">Praca</button>
+    <button onclick="show('summary')">Koniec</button>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const PALLET_ITEMS = [{"id": 1, "ean": "4306517600000", "name": "Philips LED produkt 1", "shelf": "Philips LED", "shelfKey": "philips", "x": 10, "y": 18, "position": 1, "cartonSize": 6, "cartons": 3, "qty": 18, "done": false}, {"id": 2, "ean": "4306517600037", "name": "Ledvance produkt 2", "shelf": "Ledvance", "shelfKey": "ledvance", "x": 63, "y": 18, "position": 5, "cartonSize": 36, "cartons": 3, "qty": 108, "done": false}, {"id": 3, "ean": "4306517600074", "name": "Specjalne produkt 3", "shelf": "Specjalne", "shelfKey": "specjalne", "x": 10, "y": 64, "position": 61, "cartonSize": 6, "cartons": 4, "qty": 24, "done": false}, {"id": 4, "ean": "4306517600111", "name": "Radium produkt 4", "shelf": "Radium", "shelfKey": "radium", "x": 63, "y": 64, "position": 25, "cartonSize": 48, "cartons": 3, "qty": 144, "done": false}, {"id": 5, "ean": "4306517600148", "name": "Philips LED produkt 5", "shelf": "Philips LED", "shelfKey": "philips", "x": 10, "y": 18, "position": 8, "cartonSize": 6, "cartons": 2, "qty": 12, "done": false}, {"id": 6, "ean": "4306517600185", "name": "Ledvance produkt 6", "shelf": "Ledvance", "shelfKey": "ledvance", "x": 63, "y": 18, "position": 17, "cartonSize": 24, "cartons": 5, "qty": 120, "done": false}, {"id": 7, "ean": "4306517600222", "name": "Specjalne produkt 7", "shelf": "Specjalne", "shelfKey": "specjalne", "x": 10, "y": 64, "position": 3, "cartonSize": 12, "cartons": 2, "qty": 24, "done": false}, {"id": 8, "ean": "4306517600259", "name": "Radium produkt 8", "shelf": "Radium", "shelfKey": "radium", "x": 63, "y": 64, "position": 51, "cartonSize": 36, "cartons": 1, "qty": 36, "done": false}, {"id": 9, "ean": "4306517600296", "name": "Philips LED produkt 9", "shelf": "Philips LED", "shelfKey": "philips", "x": 10, "y": 18, "position": 1, "cartonSize": 36, "cartons": 1, "qty": 36, "done": false}, {"id": 10, "ean": "4306517600333", "name": "Ledvance produkt 10", "shelf": "Ledvance", "shelfKey": "ledvance", "x": 63, "y": 18, "position": 24, "cartonSize": 24, "cartons": 6, "qty": 144, "done": false}, {"id": 11, "ean": "4306517600370", "name": "Specjalne produkt 11", "shelf": "Specjalne", "shelfKey": "specjalne", "x": 10, "y": 64, "position": 3, "cartonSize": 6, "cartons": 1, "qty": 6, "done": false}, {"id": 12, "ean": "4306517600407", "name": "Radium produkt 12", "shelf": "Radium", "shelfKey": "radium", "x": 63, "y": 64, "position": 7, "cartonSize": 12, "cartons": 2, "qty": 24, "done": false}, {"id": 13, "ean": "4306517600444", "name": "Philips LED produkt 13", "shelf": "Philips LED", "shelfKey": "philips", "x": 10, "y": 18, "position": 44, "cartonSize": 24, "cartons": 4, "qty": 96, "done": false}, {"id": 14, "ean": "4306517600481", "name": "Ledvance produkt 14", "shelf": "Ledvance", "shelfKey": "ledvance", "x": 63, "y": 18, "position": 24, "cartonSize": 36, "cartons": 3, "qty": 108, "done": false}, {"id": 15, "ean": "4306517600518", "name": "Specjalne produkt 15", "shelf": "Specjalne", "shelfKey": "specjalne", "x": 10, "y": 64, "position": 29, "cartonSize": 6, "cartons": 3, "qty": 18, "done": false}, {"id": 16, "ean": "4306517600555", "name": "Radium produkt 16", "shelf": "Radium", "shelfKey": "radium", "x": 63, "y": 64, "position": 18, "cartonSize": 48, "cartons": 4, "qty": 192, "done": false}, {"id": 17, "ean": "4306517600592", "name": "Philips LED produkt 17", "shelf": "Philips LED", "shelfKey": "philips", "x": 10, "y": 18, "position": 44, "cartonSize": 48, "cartons": 6, "qty": 288, "done": false}, {"id": 18, "ean": "4306517600629", "name": "Ledvance produkt 18", "shelf": "Ledvance", "shelfKey": "ledvance", "x": 63, "y": 18, "position": 5, "cartonSize": 48, "cartons": 3, "qty": 144, "done": false}, {"id": 19, "ean": "4306517600666", "name": "Specjalne produkt 19", "shelf": "Specjalne", "shelfKey": "specjalne", "x": 10, "y": 64, "position": 61, "cartonSize": 36, "cartons": 6, "qty": 216, "done": false}, {"id": 20, "ean": "4306517600703", "name": "Radium produkt 20", "shelf": "Radium", "shelfKey": "radium", "x": 63, "y": 64, "position": 51, "cartonSize": 36, "cartons": 6, "qty": 216, "done": false}, {"id": 21, "ean": "4306517600740", "name": "Philips LED produkt 21", "shelf": "Philips LED", "shelfKey": "philips", "x": 10, "y": 18, "position": 44, "cartonSize": 48, "cartons": 4, "qty": 192, "done": false}, {"id": 22, "ean": "4306517600777", "name": "Ledvance produkt 22", "shelf": "Ledvance", "shelfKey": "ledvance", "x": 63, "y": 18, "position": 35, "cartonSize": 36, "cartons": 3, "qty": 108, "done": false}, {"id": 23, "ean": "4306517600814", "name": "Specjalne produkt 23", "shelf": "Specjalne", "shelfKey": "specjalne", "x": 10, "y": 64, "position": 14, "cartonSize": 6, "cartons": 6, "qty": 36, "done": false}, {"id": 24, "ean": "4306517600851", "name": "Radium produkt 24", "shelf": "Radium", "shelfKey": "radium", "x": 63, "y": 64, "position": 64, "cartonSize": 6, "cartons": 4, "qty": 24, "done": false}, {"id": 25, "ean": "4306517600888", "name": "Philips LED produkt 25", "shelf": "Philips LED", "shelfKey": "philips", "x": 10, "y": 18, "position": 13, "cartonSize": 24, "cartons": 2, "qty": 48, "done": false}, {"id": 26, "ean": "4306517600925", "name": "Ledvance produkt 26", "shelf": "Ledvance", "shelfKey": "ledvance", "x": 63, "y": 18, "position": 24, "cartonSize": 24, "cartons": 5, "qty": 120, "done": false}, {"id": 27, "ean": "4306517600962", "name": "Specjalne produkt 27", "shelf": "Specjalne", "shelfKey": "specjalne", "x": 10, "y": 64, "position": 44, "cartonSize": 6, "cartons": 6, "qty": 36, "done": false}, {"id": 28, "ean": "4306517600999", "name": "Radium produkt 28", "shelf": "Radium", "shelfKey": "radium", "x": 63, "y": 64, "position": 25, "cartonSize": 36, "cartons": 5, "qty": 180, "done": false}, {"id": 29, "ean": "4306517601036", "name": "Philips LED produkt 29", "shelf": "Philips LED", "shelfKey": "philips", "x": 10, "y": 18, "position": 44, "cartonSize": 6, "cartons": 2, "qty": 12, "done": false}, {"id": 30, "ean": "4306517601073", "name": "Ledvance produkt 30", "shelf": "Ledvance", "shelfKey": "ledvance", "x": 63, "y": 18, "position": 17, "cartonSize": 6, "cartons": 6, "qty": 36, "done": false}, {"id": 31, "ean": "4306517601110", "name": "Specjalne produkt 31", "shelf": "Specjalne", "shelfKey": "specjalne", "x": 10, "y": 64, "position": 14, "cartonSize": 6, "cartons": 3, "qty": 18, "done": false}, {"id": 32, "ean": "4306517601147", "name": "Radium produkt 32", "shelf": "Radium", "shelfKey": "radium", "x": 63, "y": 64, "position": 51, "cartonSize": 36, "cartons": 5, "qty": 180, "done": false}, {"id": 33, "ean": "4306517601184", "name": "Philips LED produkt 33", "shelf": "Philips LED", "shelfKey": "philips", "x": 10, "y": 18, "position": 13, "cartonSize": 6, "cartons": 6, "qty": 36, "done": false}];
+const SHELVES = [{"key": "philips", "name": "Philips LED", "x": 10, "y": 18, "positions": [1, 8, 13, 21, 44, 58, 69]}, {"key": "ledvance", "name": "Ledvance", "x": 63, "y": 18, "positions": [5, 12, 17, 24, 35, 41, 52]}, {"key": "specjalne", "name": "Specjalne", "x": 10, "y": 64, "positions": [3, 14, 29, 44, 61, 69]}, {"key": "radium", "name": "Radium", "x": 63, "y": 64, "positions": [7, 18, 25, 36, 51, 64]}];
+let currentShelfKey=null;
+let started=false;
+let scannedCount=0;
+let listening=false, recognition=null, restartTimer=null;
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const order=['start','mapScreen','work','summary'];
+  document.querySelectorAll('.nav button').forEach((b,i)=>b.classList.toggle('active',order[i]===id));
+}
+
+function startGame(){
+  speak('Rozpoczynamy grę. Podaj numer palety.');
+  show('start');
+  document.getElementById('palletNo').focus();
+}
+
+function loadPallet(){
+  started=true;
+  currentShelfKey=null;
+  scannedCount=0;
+  PALLET_ITEMS.forEach(x=>x.done=false);
+  renderAll();
+  speak('Paleta wczytana. Rozplanowałem trasę na sklepie. Podaj pierwszy EAN z góry palety.');
+  toast('Paleta wczytana. Trasa gotowa.');
+  show('mapScreen');
+}
+
+function grouped(){
+  const g={};
+  PALLET_ITEMS.forEach(it=>{
+    if(!g[it.shelfKey])g[it.shelfKey]={key:it.shelfKey,name:it.shelf,items:[],qty:0,x:it.x,y:it.y};
+    g[it.shelfKey].items.push(it);
+    g[it.shelfKey].qty+=it.qty;
+  });
+  return Object.values(g);
+}
+
+function renderAll(){
+  renderStats();
+  renderMap();
+  renderPallet();
+  renderTask();
+}
+
+function renderStats(){
+  const left=PALLET_ITEMS.filter(x=>!x.done);
+  const leftQty=left.reduce((s,x)=>s+x.qty,0);
+  const cartonCount=PALLET_ITEMS.reduce((s,x)=>s+x.cartons,0);
+  document.getElementById('leftUnits').innerHTML=leftQty+'<span>sztuk zostało</span>';
+  document.getElementById('leftEans').innerHTML=left.length+'<span>EAN zostało</span>';
+  document.getElementById('cartons').innerHTML=cartonCount+'<span>kartonów</span>';
+  const pct=Math.round((3000-leftQty)/3000*100);
+  document.getElementById('bar').style.width=pct+'%';
+  document.getElementById('progressText').textContent='Postęp: '+(3000-leftQty)+'/3000 sztuk ('+pct+'%)';
+}
+
+function renderMap(){
+  const map=document.getElementById('storeMap');
+  map.querySelectorAll('.shelf').forEach(e=>e.remove());
+  const groups=grouped();
+  for(const s of SHELVES){
+    const grp=groups.find(g=>g.key===s.key);
+    const left=grp?grp.items.filter(x=>!x.done).length:0;
+    const div=document.createElement('div');
+    div.className='shelf '+(currentShelfKey===s.key?'active ':'')+(left===0?'done':'');
+    div.style.left=s.x+'%'; div.style.top=s.y+'%';
+    div.innerHTML=s.name+'<br><span class="small">'+left+' EAN</span>';
+    map.appendChild(div);
+  }
+  drawPath();
+}
+
+function drawPath(){
+  const svg=document.getElementById('pathSvg');
+  const groups=grouped().filter(g=>g.items.some(x=>!x.done));
+  const points=[{x:50,y:94}].concat(groups.map(g=>({x:g.x+13,y:g.y+9,key:g.key})));
+  let html='';
+  for(let i=0;i<points.length-1;i++)html+=`<line x1="${points[i].x}" y1="${points[i].y}" x2="${points[i+1].x}" y2="${points[i+1].y}"></line>`;
+  for(const p of points)html+=`<circle cx="${p.x}" cy="${p.y}" r="2.5"></circle>`;
+  svg.innerHTML=html;
+}
+
+function renderPallet(){
+  const visual=document.getElementById('palletVisual');
+  visual.innerHTML='';
+  const maxBoxes=80;
+  for(let i=0;i<Math.min(maxBoxes,PALLET_ITEMS.length);i++){
+    const it=PALLET_ITEMS[i];
+    const x=(i%10)*10+1, y=Math.floor(i/10)*26+7;
+    const div=document.createElement('div');
+    div.className='box '+it.shelfKey+(it.done?' done':'');
+    div.style.left=x+'%'; div.style.top=y+'px'; div.style.width=(8+Math.min(13,it.cartons*2))+'%'; div.style.height='21px';
+    div.textContent=it.done?'OK':it.cartons+'k';
+    visual.appendChild(div);
+  }
+}
+
+function currentShelfItems(){
+  if(!currentShelfKey)return [];
+  return PALLET_ITEMS.filter(x=>x.shelfKey===currentShelfKey && !x.done);
+}
+
+function renderTask(){
+  const task=document.getElementById('task');
+  const list=document.getElementById('currentList');
+  const warning=document.getElementById('warning');
+  warning.style.display='none';
+  const left=PALLET_ITEMS.filter(x=>!x.done);
+  if(left.length===0){
+    task.innerHTML='<div class="big">Paleta gotowa</div><p class="small">Wszystkie produkty zostały odhaczone.</p>';
+    list.innerHTML='';
+    document.getElementById('summaryText').textContent='Rozłożono 3000 sztuk z palety '+document.getElementById('palletNo').value+'.';
+    return;
+  }
+  if(!currentShelfKey){
+    task.innerHTML='<p class="small">Podaj EAN z góry palety. Apka wybierze regał i poprowadzi Cię na miejsce.</p><div class="eanbox">Czekam na pierwszy EAN</div>';
+    list.innerHTML='<p class="small">Najpierw podaj EAN z góry palety.</p>';
+    return;
+  }
+  const items=currentShelfItems();
+  const shelfName=PALLET_ITEMS.find(x=>x.shelfKey===currentShelfKey)?.shelf||currentShelfKey;
+  if(items.length===0){
+    currentShelfKey=null;
+    renderTask();
+    return;
+  }
+  const next=items[0];
+  task.innerHTML=`<p class="small">Jedź / zostań przy regale:</p><div class="big">${shelfName}</div><p class="small">Na tym regale zostało: <b>${items.length} EAN</b>, razem <b>${items.reduce((s,x)=>s+x.qty,0)} szt.</b></p><div class="eanbox">Następny EAN: ${next.ean}</div>`;
+  list.innerHTML=items.slice(0,14).map((it,i)=>`<div class="product ${i===0?'next':''}"><b>${it.name}</b><br><span class="small">EAN: ${it.ean} • pozycja ${it.position} • ${it.cartons} kart. = ${it.qty} szt.</span></div>`).join('')+(items.length>14?'<p class="small">...i kolejne pozycje.</p>':'');
+}
+
+function normalizeDigits(text){
+  const map={'zero':'0','jeden':'1','jedna':'1','dwa':'2','dwie':'2','trzy':'3','cztery':'4','pięć':'5','piec':'5','sześć':'6','szesc':'6','siedem':'7','osiem':'8','dziewięć':'9','dziewiec':'9'};
+  let out='';
+  String(text||'').toLowerCase().split(/\s+/).forEach(w=>out += map[w] || w.replace(/\D/g,''));
+  return out;
+}
+
+function handleEAN(raw){
+  const digits=normalizeDigits(raw);
+  if(!digits || digits.length<2)return;
+  const item=PALLET_ITEMS.find(x=>!x.done && x.ean.endsWith(digits));
+  if(!item){
+    sayAndWarn('Nie znalazłem tego EAN-u na tej palecie.');
+    return;
+  }
+  if(!currentShelfKey){
+    currentShelfKey=item.shelfKey;
+    speak('Ten towar idzie na regał '+item.shelf+'. Jedź do regału. Na tym regale jest '+currentShelfItems().length+' artykułów z palety.');
+  } else if(item.shelfKey!==currentShelfKey){
+    const still=currentShelfItems().length;
+    sayAndWarn('Nie tutaj. Ten EAN idzie na '+item.shelf+'. Zostań przy obecnym regale, masz tu jeszcze '+still+' artykułów.');
+    return;
+  }
+  item.done=true;
+  scannedCount++;
+  const leftHere=currentShelfItems().length;
+  if(scannedCount%5===0 && leftHere>0){
+    speak('Dobrze. Na tym regale zostało jeszcze '+leftHere+' artykułów.');
+  } else if(leftHere>0){
+    speak('Odhaczono. Zostało tutaj '+leftHere+'.');
+  } else {
+    speak('Regał zakończony. Podaj kolejny EAN z góry palety.');
+    currentShelfKey=null;
+  }
+  renderAll();
+  if(PALLET_ITEMS.every(x=>x.done)){
+    speak('Paleta zakończona. Misja wykonana.');
+    show('summary');
+  }
+}
+
+function sayAndWarn(text){
+  const w=document.getElementById('warning');
+  w.textContent=text;
+  w.style.display='block';
+  speak(text);
+  toast(text);
+}
+
+function demoSayNext(){
+  let item=null;
+  if(currentShelfKey)item=currentShelfItems()[0];
+  if(!item)item=PALLET_ITEMS.find(x=>!x.done);
+  if(item)handleEAN(item.ean);
+}
+
+function demoSayWrong(){
+  if(!currentShelfKey){toast('Najpierw podaj dobry pierwszy EAN.');return;}
+  const wrong=PALLET_ITEMS.find(x=>!x.done && x.shelfKey!==currentShelfKey);
+  if(wrong)handleEAN(wrong.ean);
+}
+
+function toggleMic(){
+  if(listening)stopMic(); else startMic();
+}
+
+function startMic(){
+  if(!SR){alert('Mikrofon działa w Chrome przez HTTPS. Do lokalnego testu użyj przycisków demo.');return;}
+  if(recognition)try{recognition.abort();}catch(e){}
+  recognition=new SR(); recognition.lang='pl-PL'; recognition.continuous=false; recognition.interimResults=true; recognition.maxAlternatives=3;
+  recognition.onstart=()=>{listening=true;updateMic(true);};
+  recognition.onresult=(e)=>{
+    let final='', interim='';
+    for(let i=e.resultIndex;i<e.results.length;i++){const t=e.results[i][0].transcript;if(e.results[i].isFinal)final+=t;else interim+=t;}
+    if(final)handleEAN(final);
+  };
+  recognition.onerror=()=>scheduleRestart(400);
+  recognition.onend=()=>{if(listening)scheduleRestart(250);};
+  try{recognition.start();}catch(e){scheduleRestart(500);}
+}
+
+function stopMic(){
+  listening=false; clearTimeout(restartTimer); try{recognition&&recognition.abort();}catch(e){} updateMic(false);
+}
+
+function scheduleRestart(d){clearTimeout(restartTimer);if(listening)restartTimer=setTimeout(()=>startMic(),d);}
+function updateMic(on){document.getElementById('micDot').className='dot '+(on?'on':'');document.getElementById('micStatus').textContent=on?'Nasłuchiwanie aktywne':'Mikrofon wyłączony';document.getElementById('micBtn').textContent=on?'Zatrzymaj mikrofon':'Włącz mikrofon';}
+
+let plVoice=null;
+function pickVoice(){if(!window.speechSynthesis)return;const v=speechSynthesis.getVoices();plVoice=v.find(x=>x.lang==='pl-PL')||v.find(x=>x.lang&&x.lang.startsWith('pl'))||null;}
+if(window.speechSynthesis){pickVoice();speechSynthesis.onvoiceschanged=pickVoice;}
+function speak(text){if(!window.speechSynthesis)return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(String(text).replace(/_/g,' '));u.lang='pl-PL';u.rate=.96;if(plVoice)u.voice=plVoice;speechSynthesis.speak(u);}
+function toast(t){const el=document.getElementById('toast');el.textContent=t;el.style.display='block';setTimeout(()=>el.style.display='none',2200);}
+function resetAll(){currentShelfKey=null;scannedCount=0;PALLET_ITEMS.forEach(x=>x.done=false);renderAll();show('start');}
+
+renderAll();
+</script>
+</body>
+</html>
