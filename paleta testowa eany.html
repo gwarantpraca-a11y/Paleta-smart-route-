@@ -214,8 +214,12 @@ html,body{background:var(--hb-black)}
           </div>
           <div class="smart-progress" style="margin:10px 0"><span id="smart-progress-bar"></span></div>
           <div class="smart-actions">
-            <button class="smart-btn" onclick="smartStartGame()">Rozpocznij grÄ™</button>
+            <button class="smart-btn" onclick="smartAskEntryMode()">Start asystenta</button>
             <button class="smart-btn red" onclick="smartResetGame()">Reset</button>
+          </div>
+          <div class="smart-actions" style="margin-top:8px">
+            <button class="smart-btn dark" onclick="smartChooseMode('pallet')">Kod palety</button>
+            <button class="smart-btn dark" onclick="smartChooseMode('ean')">EAN z gÃ³ry</button>
           </div>
           <div class="smart-input-row" style="margin-top:10px">
             <input id="smart-ean-input" inputmode="numeric" placeholder="Wpisz / skanuj EAN lub koÅ„cÃ³wkÄ™"/>
@@ -274,7 +278,7 @@ let db=[], listEditing=false, activeListHitIds=[];
 function loadDB(){try{db=JSON.parse(localStorage.getItem('mag_v2')||'[]');}catch(e){db=[];}updateCount();}
 function saveDB(){localStorage.setItem('mag_v2',JSON.stringify(db));updateCount();}
 function updateCount(){document.getElementById('db-count').textContent=db.length+' towarÃ³w';updateStartStatus();}
-function showTab(n){['add','scan-list','list','shelf','smart'].forEach(t=>{document.getElementById('panel-'+t).classList.toggle('active',t===n);document.getElementById('tab-'+t).classList.toggle('active',t===n);});if(n==='list')renderList();if(n==='smart'){setTimeout(()=>{if(typeof smartEnsurePallet==='function')smartEnsurePallet();},0);}if(n==='shelf'){if(activeShelfMatches.length||activeShelfKey){document.getElementById('shelf-picker').style.display='none';document.getElementById('shelf-view').style.display='block';}else{renderShelfPicker();}}}
+function showTab(n){['add','scan-list','list','shelf','smart'].forEach(t=>{document.getElementById('panel-'+t).classList.toggle('active',t===n);document.getElementById('tab-'+t).classList.toggle('active',t===n);});if(n==='list')renderList();if(n==='smart'){setTimeout(()=>{if(typeof smartAskEntryMode==='function'&&smartAssistantMode==='idle')smartAskEntryMode();else if(typeof smartEnsurePallet==='function')smartEnsurePallet();},0);}if(n==='shelf'){if(activeShelfMatches.length||activeShelfKey){document.getElementById('shelf-picker').style.display='none';document.getElementById('shelf-view').style.display='block';}else{renderShelfPicker();}}}
 const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
 let recognition=null,listening=false,restartTimer=null;
 function toggleListening(){if(listening)stopListening();else startListening();}
@@ -288,7 +292,7 @@ function startListening(){
     for(let i=e.resultIndex;i<e.results.length;i++){const t=e.results[i][0].transcript;if(e.results[i].isFinal)final+=t;else interim+=t;}
     const raw=final||interim;const digits=spokenToDigits(raw);
     if(digits)document.getElementById('heard-val').textContent='...'+digits;
-    if(final&&digits&&digits.length>=2){const smartActive=document.getElementById('tab-smart')?.classList.contains('active');if(smartActive&&typeof smartVoiceEan==='function')smartVoiceEan(digits);else searchProduct(digits);}
+    if(final){const smartActive=document.getElementById('tab-smart')?.classList.contains('active');if(smartActive&&typeof smartHandleVoiceText==='function')smartHandleVoiceText(raw,digits);else if(digits&&digits.length>=2)searchProduct(digits);}
   };
   recognition.onerror=(e)=>{if(e.error==='not-allowed'){stopListening();alert('ZezwÃ³l na dostÄ™p do mikrofonu!');return;}scheduleRestart(300);};
   recognition.onend=()=>{if(listening)scheduleRestart(150);};
@@ -1953,7 +1957,7 @@ const SMART_DEMO_PALLET = [
     "name": "Jarzeniowki str 1"
   }
 ];
-let smartPallet=[], smartActiveShelf=null, smartLastItem=null, smartStartedAt=null, smartTimerId=null;
+let smartPallet=[], smartActiveShelf=null, smartLastItem=null, smartStartedAt=null, smartTimerId=null, smartAssistantMode='idle';
 function smartEl(id){return document.getElementById(id);}
 function smartShelfName(key){return shelfLabel(key,SHELVES[key]?.label||key);}
 function smartSpeak(text){speak(text);}
@@ -1969,12 +1973,45 @@ function smartItemsFromCurrentDb(){
   return out;
 }
 function smartEnsurePallet(){if(!smartPallet.length)smartCreatePallet();else smartRenderAll();}
-function smartVoiceEan(digits){smartEnsurePallet();const input=smartEl('smart-ean-input');if(input)input.value=digits;smartCheckEan();}
+function smartAskEntryMode(){
+  smartAssistantMode='choice';
+  smartEnsurePallet();
+  smartEl('smart-game-status').textContent='Co chcesz zrobiÄ‡: podaÄ‡ kod palety czy od razu EAN z gÃ³ry?';
+  smartSpeak('Co chcesz zrobiÄ‡ najpierw? Podaj kod palety, albo od razu EAN z gÃ³ry.');
+  if(!listening)startListening();
+}
+function smartChooseMode(mode){
+  smartEnsurePallet();
+  if(mode==='pallet'){
+    smartAssistantMode='pallet';
+    smartEl('smart-game-status').textContent='Podaj albo zeskanuj kod palety. Dla testu moÅ¼esz powiedzieÄ‡: paleta testowa.';
+    smartSpeak('Podaj numer palety.');
+  }else{
+    smartAssistantMode='ean';
+    smartStartGame();
+  }
+}
+function smartHandleVoiceText(raw,digits){
+  const text=String(raw||'').toLowerCase();
+  if(smartAssistantMode==='choice'){
+    if(text.includes('palet')||text.includes('kod')){smartChooseMode('pallet');return;}
+    if(text.includes('ean')||text.includes('gÃ³r')||text.includes('gor')||text.includes('towar')||digits){smartChooseMode('ean');if(digits)smartVoiceEan(digits);return;}
+    smartSpeak('Powiedz kod palety albo EAN z gÃ³ry.');return;
+  }
+  if(smartAssistantMode==='pallet'){
+    smartCreatePallet();smartAssistantMode='ean';
+    smartEl('smart-game-status').textContent='Paleta przyjÄ™ta. Podaj pierwszy EAN z gÃ³ry palety.';
+    smartSpeak('Paleta przyjÄ™ta. Podaj pierwszy EAN z gÃ³ry palety.');return;
+  }
+  if(digits)smartVoiceEan(digits);else smartSpeak('Podaj EAN z gÃ³ry palety.');
+}
+function smartVoiceEan(digits){smartEnsurePallet();smartAssistantMode='ean';const input=smartEl('smart-ean-input');if(input)input.value=digits;smartCheckEan();}
+
 function smartCreatePallet(){
   const source=smartItemsFromCurrentDb();
   if(!source.length){smartEl('smart-game-status').textContent='Najpierw muszÄ… zaÅ‚adowaÄ‡ siÄ™ dane regaÅ‚Ã³w.';return;}
   smartPallet=SMART_DEMO_PALLET.map((demo,i)=>{const live=source.find(x=>x.ean===demo.ean)||demo;return {...live,shelf_key:demo.shelf_key,shelf_name:demo.shelf_name,position:demo.position,name:demo.name,layer:i+1,cartons:demo.cartons,done:false};});
-  smartActiveShelf=null;smartLastItem=null;smartStartedAt=null;clearInterval(smartTimerId);
+  smartActiveShelf=null;smartLastItem=null;if(smartAssistantMode!=='pallet')smartAssistantMode='idle';smartStartedAt=null;clearInterval(smartTimerId);
   const no='MAG-'+new Date().toISOString().slice(2,10).replaceAll('-','')+'-'+String(Math.floor(Math.random()*900)+100);
   smartEl('smart-pallet-no').textContent=no;smartEl('smart-total-items').textContent=smartPallet.length;smartEl('smart-total-cartons').textContent=smartPallet.reduce((s,x)=>s+x.cartons,0);smartEl('smart-total-shelves').textContent=new Set(smartPallet.map(x=>x.shelf_key)).size;
   smartEl('smart-print-meta').textContent='Paleta '+no+' | pozycji '+smartPallet.length+' | kartony '+smartPallet.reduce((s,x)=>s+x.cartons,0);
@@ -1983,7 +2020,7 @@ function smartCreatePallet(){
   smartRenderAll();
 }
 function smartStartGame(){if(!smartPallet.length)smartCreatePallet();smartStartedAt=Date.now();clearInterval(smartTimerId);smartTimerId=setInterval(smartUpdateTimer,500);smartEl('smart-game-status').textContent='Podaj pierwszy EAN z gÃ³ry palety.';smartSpeak('Podaj pierwszy EAN z gÃ³ry palety.');smartEl('smart-ean-input').focus();smartRenderAll();}
-function smartResetGame(){smartPallet.forEach(x=>x.done=false);smartActiveShelf=null;smartLastItem=null;smartStartedAt=null;clearInterval(smartTimerId);smartEl('smart-timer').textContent='00:00';smartEl('smart-game-status').textContent='Gra zresetowana. Podaj pierwszy EAN z gÃ³ry palety.';smartRenderAll();}
+function smartResetGame(){smartPallet.forEach(x=>x.done=false);smartActiveShelf=null;smartLastItem=null;smartAssistantMode='idle';smartStartedAt=null;clearInterval(smartTimerId);smartEl('smart-timer').textContent='00:00';smartEl('smart-game-status').textContent='Gra zresetowana. Podaj pierwszy EAN z gÃ³ry palety.';smartRenderAll();}
 function smartFindByDigits(digits){return smartPallet.find(x=>!x.done&&String(x.ean).endsWith(digits));}
 function smartCheckEan(){
   const digits=smartEl('smart-ean-input').value.replace(/\D/g,'');smartEl('smart-ean-input').value='';
