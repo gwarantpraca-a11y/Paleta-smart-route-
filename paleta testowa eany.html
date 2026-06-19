@@ -190,7 +190,7 @@ html,body{background:var(--hb-black)}
           <div class="smart-print-head"><h1>Wirtualne przyjęcie towaru</h1><p id="smart-print-meta"></p></div>
           <p class="smart-status" id="smart-load-status">Dane bierzemy z tej samej bazy Supabase.</p>
           <div class="smart-actions smart-no-print">
-            <button class="smart-btn" onclick="smartCreatePallet()">Utwórz paletę</button>
+            <button class="smart-btn" onclick="smartCreatePallet()">Wgraj paletę testową</button>
             <button class="smart-btn dark" onclick="window.print()">Drukuj</button>
           </div>
           <p class="smart-muted">To jest gałąź eksperymentalna: stabilne regały i lista zostają obok.</p>
@@ -270,7 +270,7 @@ let db=[], listEditing=false, activeListHitIds=[];
 function loadDB(){try{db=JSON.parse(localStorage.getItem('mag_v2')||'[]');}catch(e){db=[];}updateCount();}
 function saveDB(){localStorage.setItem('mag_v2',JSON.stringify(db));updateCount();}
 function updateCount(){document.getElementById('db-count').textContent=db.length+' towarów';updateStartStatus();}
-function showTab(n){['add','scan-list','list','shelf','smart'].forEach(t=>{document.getElementById('panel-'+t).classList.toggle('active',t===n);document.getElementById('tab-'+t).classList.toggle('active',t===n);});if(n==='list')renderList();if(n==='shelf'){if(activeShelfMatches.length||activeShelfKey){document.getElementById('shelf-picker').style.display='none';document.getElementById('shelf-view').style.display='block';}else{renderShelfPicker();}}}
+function showTab(n){['add','scan-list','list','shelf','smart'].forEach(t=>{document.getElementById('panel-'+t).classList.toggle('active',t===n);document.getElementById('tab-'+t).classList.toggle('active',t===n);});if(n==='list')renderList();if(n==='smart'){setTimeout(()=>{if(typeof smartEnsurePallet==='function')smartEnsurePallet();},0);}if(n==='shelf'){if(activeShelfMatches.length||activeShelfKey){document.getElementById('shelf-picker').style.display='none';document.getElementById('shelf-view').style.display='block';}else{renderShelfPicker();}}}
 const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
 let recognition=null,listening=false,restartTimer=null;
 function toggleListening(){if(listening)stopListening();else startListening();}
@@ -284,7 +284,7 @@ function startListening(){
     for(let i=e.resultIndex;i<e.results.length;i++){const t=e.results[i][0].transcript;if(e.results[i].isFinal)final+=t;else interim+=t;}
     const raw=final||interim;const digits=spokenToDigits(raw);
     if(digits)document.getElementById('heard-val').textContent='...'+digits;
-    if(final&&digits&&digits.length>=2)searchProduct(digits);
+    if(final&&digits&&digits.length>=2){const smartActive=document.getElementById('tab-smart')?.classList.contains('active');if(smartActive&&typeof smartVoiceEan==='function')smartVoiceEan(digits);else searchProduct(digits);}
   };
   recognition.onerror=(e)=>{if(e.error==='not-allowed'){stopListening();alert('Zezwól na dostęp do mikrofonu!');return;}scheduleRestart(300);};
   recognition.onend=()=>{if(listening)scheduleRestart(150);};
@@ -1962,6 +1962,8 @@ function smartItemsFromCurrentDb(){
   }
   return out;
 }
+function smartEnsurePallet(){if(!smartPallet.length)smartCreatePallet();else smartRenderAll();}
+function smartVoiceEan(digits){smartEnsurePallet();const input=smartEl('smart-ean-input');if(input)input.value=digits;smartCheckEan();}
 function smartCreatePallet(){
   const source=smartItemsFromCurrentDb();
   if(!source.length){smartEl('smart-game-status').textContent='Najpierw muszą załadować się dane regałów.';return;}
@@ -1971,7 +1973,7 @@ function smartCreatePallet(){
   smartEl('smart-pallet-no').textContent=no;smartEl('smart-total-items').textContent=smartPallet.length;smartEl('smart-total-cartons').textContent=smartPallet.reduce((s,x)=>s+x.cartons,0);smartEl('smart-total-shelves').textContent=new Set(smartPallet.map(x=>x.shelf_key)).size;
   smartEl('smart-print-meta').textContent='Paleta '+no+' | pozycji '+smartPallet.length+' | kartony '+smartPallet.reduce((s,x)=>s+x.cartons,0);
   smartEl('smart-load-status').innerHTML='<span class="smart-ok">Paleta gotowa z aktualnych danych aplikacji.</span>';
-  smartEl('smart-game-status').textContent='Paleta gotowa. Kliknij Rozpocznij grę.';
+  smartEl('smart-game-status').textContent='Jedna paleta testowa gotowa. Kliknij Rozpocznij grę albo podaj EAN.';
   smartRenderAll();
 }
 function smartStartGame(){if(!smartPallet.length)smartCreatePallet();smartStartedAt=Date.now();clearInterval(smartTimerId);smartTimerId=setInterval(smartUpdateTimer,500);smartEl('smart-game-status').textContent='Podaj pierwszy EAN z góry palety.';smartSpeak('Podaj pierwszy EAN z góry palety.');smartEl('smart-ean-input').focus();smartRenderAll();}
