@@ -4,89 +4,102 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
 <meta name="theme-color" content="#111111"/>
-<title>Paleta Smart Route — tablet</title>
+<title>Paleta Smart Route</title>
 <style>
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;height:100%;font-family:Arial,Helvetica,sans-serif;background:#111;color:#111;overflow:hidden}
-#app{height:100vh;height:100dvh;display:flex;flex-direction:column;background:#f5f2ea}
-.top{background:linear-gradient(135deg,#111,#2b1600);color:#fff;padding:14px 16px;border-bottom:5px solid #f37021;flex-shrink:0}
-.top h1{margin:0;font-size:21px;text-transform:uppercase;letter-spacing:.2px}
-.top p{margin:5px 0 0;font-size:12px;color:#eee}
-.status{display:flex;gap:8px;align-items:center;margin-top:8px;font-size:12px;font-weight:900;color:#ffd400}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;background:#111;overflow:hidden;color:#111}
+:root{--hb-black:#111;--hb-orange:#f37021;--hb-yellow:#ffd400;--hb-red:#d71920;--hb-paper:#f5f2ea;--hb-line:#d8d4ca}
+#app{height:100vh;height:100dvh;display:flex;flex-direction:column;background:var(--hb-paper)}
+.topbar{background:linear-gradient(135deg,#111 0%,#1d1d1d 60%,#2a1200 100%);color:#fff;padding:env(safe-area-inset-top,12px) 16px 14px;border-bottom:5px solid var(--hb-orange);box-shadow:inset 0 -2px 0 var(--hb-yellow);flex-shrink:0}
+.topbar h1{font-size:20px;font-weight:1000;text-transform:uppercase;letter-spacing:.2px}
+.topbar p{font-size:12px;font-weight:800;color:#eee;margin-top:4px}
+.status-row{display:flex;justify-content:space-between;align-items:center;margin-top:9px;gap:10px}
+.status{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:900;color:#fff}
 .dot{width:11px;height:11px;border-radius:50%;background:#777}
-.dot.on{background:#4CAF50;box-shadow:0 0 0 4px rgba(76,175,80,.18)}
+.dot.on{background:#ffd400;box-shadow:0 0 0 4px rgba(255,212,0,.17)}
+.badge{background:var(--hb-yellow);color:#111;border-radius:6px;padding:4px 8px;font-size:12px;font-weight:1000}
 .main{flex:1;overflow:hidden;display:flex;flex-direction:column}
-.screen{display:none;flex:1;overflow:auto;padding:12px}
+.screen{display:none;flex:1;overflow:auto;padding:12px;-webkit-overflow-scrolling:touch}
 .screen.active{display:block}
-.card{background:#fff;border:2px solid #d8d4ca;border-left:8px solid #f37021;border-radius:10px;padding:13px;margin-bottom:10px;box-shadow:0 2px 0 rgba(0,0,0,.08)}
-.card.red{border-left-color:#d71920}
-h2{font-size:19px;margin:0 0 8px}
-.small{font-size:13px;color:#555;line-height:1.35}
-.big{font-size:32px;line-height:1;font-weight:1000;color:#d71920}
-input{width:100%;padding:14px;border:2px solid #ccc;border-radius:8px;font-size:21px;font-weight:900}
-button{border:0;border-radius:8px;padding:14px 12px;font-size:15px;font-weight:1000;text-transform:uppercase;background:linear-gradient(90deg,#f37021,#ffd400);color:#111;box-shadow:0 3px 0 rgba(0,0,0,.25)}
-button.full{width:100%;margin-top:9px}
-button.dark{background:#111;color:#ffd400}
-button.red{background:linear-gradient(90deg,#d71920,#f37021);color:#fff}
+.card{background:#fff;border:2px solid var(--hb-line);border-left:8px solid var(--hb-orange);border-radius:7px;padding:14px;margin-bottom:12px;box-shadow:0 2px 0 rgba(0,0,0,.08)}
+.card.red{border-left-color:var(--hb-red)}
+h2{font-size:19px;margin-bottom:9px;font-weight:1000;text-transform:uppercase}
+.small{font-size:13px;color:#555;line-height:1.45}
+.big{font-size:32px;font-weight:1000;color:var(--hb-red);line-height:1.02;margin:8px 0}
+input{width:100%;padding:14px;border:2px solid #ccc;border-radius:7px;background:#fff;font-size:20px;font-weight:1000;color:#111;text-transform:uppercase}
+button{border:0;border-radius:7px;padding:14px 12px;background:linear-gradient(90deg,var(--hb-orange),var(--hb-yellow));color:#111;font-size:15px;font-weight:1000;text-transform:uppercase;box-shadow:0 3px 0 rgba(0,0,0,.25);cursor:pointer}
+button:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(0,0,0,.25)}
+button.full{width:100%;margin-top:10px}
+button.dark{background:#111;color:var(--hb-yellow)}
+button.red{background:linear-gradient(90deg,var(--hb-red),var(--hb-orange));color:#fff}
 .row{display:flex;gap:8px}
 .row button{flex:1}
 .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
-.stat{background:#111;color:#ffd400;border-radius:8px;padding:11px;text-align:center;font-weight:1000;font-size:20px}
-.stat span{display:block;color:#fff;font-size:11px;margin-top:3px}
-.map{height:315px;background:#ddd;border:4px solid #111;border-radius:12px;position:relative;overflow:hidden;background-image:linear-gradient(90deg,rgba(0,0,0,.06) 1px,transparent 1px),linear-gradient(rgba(0,0,0,.06) 1px,transparent 1px);background-size:24px 24px}
-.entrance{position:absolute;left:38%;bottom:2%;width:24%;height:24px;background:#111;color:#ffd400;text-align:center;font-size:11px;font-weight:900;padding-top:5px;border-radius:6px 6px 0 0}
-.shelf{position:absolute;width:26%;height:70px;background:#fff;border:3px solid #111;border-left:8px solid #f37021;border-radius:8px;padding:7px;font-size:12px;font-weight:1000;text-align:center}
-.shelf.active{outline:5px solid #ffd400;background:#fff4b8}
-.shelf.done{background:#e8f5e9;opacity:.75}
+.stat{background:#111;color:var(--hb-yellow);border-radius:7px;padding:11px;text-align:center;font-weight:1000;font-size:21px}
+.stat span{display:block;color:#fff;font-size:11px;margin-top:3px;font-weight:800}
+.map{height:330px;background:#eee;border:4px solid #111;border-radius:10px;position:relative;overflow:hidden;background-image:linear-gradient(90deg,rgba(0,0,0,.06) 1px,transparent 1px),linear-gradient(rgba(0,0,0,.06) 1px,transparent 1px);background-size:24px 24px}
+.entrance{position:absolute;left:37%;bottom:2%;width:26%;height:28px;background:#111;color:var(--hb-yellow);text-align:center;font-size:11px;font-weight:1000;padding-top:7px;border-radius:8px 8px 0 0}
+.shelf{position:absolute;width:27%;height:76px;background:#fff;border:3px solid #111;border-left:8px solid var(--hb-orange);border-radius:7px;padding:8px 5px;font-size:12px;font-weight:1000;text-align:center;box-shadow:4px 4px 0 rgba(0,0,0,.16)}
+.shelf.active{outline:5px solid var(--hb-yellow);background:#fff4b8}
+.shelf.done{background:#e8f5e9;opacity:.72}
 .path{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none}
-.path line{stroke:#d71920;stroke-width:5;stroke-linecap:round;stroke-dasharray:10 8}
-.path circle{fill:#d71920}
-.pallet{height:210px;background:#c28b52;border:5px solid #6f431d;border-radius:10px;position:relative;overflow:hidden;margin-top:8px}
-.box{position:absolute;background:#fff;border:2px solid #111;border-radius:4px;text-align:center;font-size:9px;font-weight:900;display:flex;align-items:center;justify-content:center;box-shadow:2px 2px 0 rgba(0,0,0,.25)}
+.path line{stroke:var(--hb-red);stroke-width:5;stroke-linecap:round;stroke-dasharray:10 8}
+.path circle{fill:var(--hb-red)}
+.pallet{height:205px;background:#c28b52;border:5px solid #6f431d;border-radius:10px;position:relative;overflow:hidden;margin-top:8px}
+.box{position:absolute;background:#fff;border:2px solid #111;border-radius:4px;text-align:center;font-size:9px;font-weight:1000;display:flex;align-items:center;justify-content:center;box-shadow:2px 2px 0 rgba(0,0,0,.25)}
 .box.done{opacity:.25}
 .box.philips{background:#fff6d6}.box.ledvance{background:#e3f2fd}.box.specjalne{background:#ffe6e6}.box.radium{background:#e8f5e9}
-.progress{height:19px;background:#ddd;border-radius:30px;overflow:hidden;border:1px solid #aaa}
-.bar{height:100%;background:linear-gradient(90deg,#f37021,#ffd400);width:0%}
-.eanbox{background:#111;color:#ffd400;border-radius:8px;padding:10px;font-family:monospace;font-size:18px;font-weight:1000;text-align:center;margin:8px 0}
+.progress{height:20px;background:#ddd;border-radius:30px;overflow:hidden;border:1px solid #aaa;margin:8px 0}
+.bar{height:100%;background:linear-gradient(90deg,var(--hb-orange),var(--hb-yellow));width:0%}
+.eanbox{background:#111;color:var(--hb-yellow);border-radius:8px;padding:10px;font-family:monospace;font-size:18px;font-weight:1000;text-align:center;margin:8px 0}
 .product{border:1px solid #ddd;background:#fafafa;border-radius:8px;padding:9px;margin:7px 0}
 .product.done{background:#e8f5e9;opacity:.65}
-.product.next{outline:3px solid #ffd400;background:#fff8cf}
-.toast{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:30;background:#111;color:#ffd400;border:2px solid #ffd400;border-radius:12px;padding:12px 16px;font-weight:1000;display:none;max-width:92%;text-align:center}
-.nav{display:flex;gap:1px;background:#111;border-top:4px solid #ffd400;flex-shrink:0}
+.product.next{outline:3px solid var(--hb-yellow);background:#fff8cf}
+.warning{background:#fff0f0;border:2px solid var(--hb-red);color:#8b1010;border-radius:8px;padding:10px;font-weight:1000;margin-top:8px;display:none}
+.paper{font-family:monospace;background:#fff;border:2px dashed #999;border-radius:7px;padding:11px;font-size:12px;white-space:pre-wrap;line-height:1.38}
+.toast{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:30;background:#111;color:var(--hb-yellow);border:2px solid var(--hb-yellow);border-radius:12px;padding:12px 16px;font-weight:1000;display:none;max-width:92%;text-align:center}
+.nav{display:flex;gap:1px;background:#111;border-top:4px solid var(--hb-yellow);flex-shrink:0}
 .nav button{flex:1;border-radius:0;box-shadow:none;background:#222;color:#fff;font-size:11px;padding:11px 4px}
-.nav button.active{background:#ffd400;color:#111}
-.warning{background:#fff0f0;border:2px solid #d71920;color:#8b1010;border-radius:8px;padding:10px;font-weight:900;margin-top:8px;display:none}
-@media(min-width:700px){
-  #app{max-width:900px;margin:auto}
+.nav button.active{background:var(--hb-yellow);color:#111}
+@media(min-width:720px){
+  #app{max-width:980px;margin:auto}
   .screen{padding:18px}
-  .tablet-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:12px}
-  .map{height:430px}
+  .tablet-grid{display:grid;grid-template-columns:1.08fr .92fr;gap:12px}
+  .map{height:440px}
 }
 </style>
 </head>
 <body>
 <div id="app">
-  <div class="top">
+  <div class="topbar">
     <h1>Paleta Smart Route</h1>
-    <p>Tablet tutorial — paleta → EAN z góry → regał → kontrola błędów</p>
-    <div class="status"><span class="dot" id="micDot"></span><span id="micStatus">Mikrofon wyłączony</span></div>
+    <p>Tryb gry w stylu Magazyn Apka — live test GitHub Pages</p>
+    <div class="status-row">
+      <div class="status"><span class="dot" id="micDot"></span><span id="micStatus">Mikrofon wyłączony</span></div>
+      <span class="badge" id="topBadge">Brak palety</span>
+    </div>
   </div>
 
   <div class="main">
     <section id="start" class="screen active">
       <div class="card red">
         <h2>Rozpocznij grę</h2>
-        <p class="small">Apka będzie gadać do pracownika od początku. Najpierw poprosi o numer palety, potem o pierwszy EAN z góry palety.</p>
+        <p class="small">Apka mówi do pracownika: podaj numer palety, potem pierwszy EAN z góry palety. System pilnuje, żeby nie jeździć bez sensu między regałami.</p>
         <button class="full red" onclick="startGame()">Rozpocznij grę</button>
       </div>
       <div class="card">
-        <h2>Numer palety</h2>
-        <input id="palletNo" value="PAL-TUTORIAL-3000" onkeydown="if(event.key==='Enter')loadPallet()"/>
+        <h2>Wybierz / podaj paletę</h2>
+        <input id="palletNo" value="MAG-260619-002" onkeydown="if(event.key==='Enter')loadPallet()"/>
+        <div class="row">
+          <button onclick="setPal('MAG-260619-001')">Paleta 001</button>
+          <button onclick="setPal('MAG-260619-002')">Paleta 002</button>
+          <button onclick="setPal('MAG-260619-003')">Paleta 003</button>
+        </div>
         <button class="full" onclick="loadPallet()">Wczytaj paletę</button>
       </div>
       <div class="card">
-        <h2>Zasada</h2>
-        <p class="small">Nie jedziemy ślepo po trasie. Pracownik podaje EAN z góry palety, żeby nie rozkładać całej palety. Apka prowadzi do regału tego EAN-u i pilnuje, żeby nie mieszać regałów.</p>
+        <h2>Papier/lista pracownika</h2>
+        <div class="paper" id="paper">Wczytaj paletę, żeby zobaczyć dokument PZ.</div>
       </div>
     </section>
 
@@ -96,19 +109,20 @@ button.red{background:linear-gradient(90deg,#d71920,#f37021);color:#fff}
           <h2>Wirtualny sklep z góry</h2>
           <div class="map" id="storeMap">
             <svg class="path" id="pathSvg" viewBox="0 0 100 100" preserveAspectRatio="none"></svg>
-            <div class="entrance">START</div>
+            <div class="entrance">START / PALETA</div>
           </div>
         </div>
         <div>
           <div class="card">
-            <h2>Paleta</h2>
+            <h2>Podsumowanie palety</h2>
             <div class="grid">
-              <div class="stat" id="leftUnits">3000<span>sztuk zostało</span></div>
+              <div class="stat" id="leftUnits">0<span>sztuk zostało</span></div>
               <div class="stat" id="leftEans">0<span>EAN zostało</span></div>
               <div class="stat" id="cartons">0<span>kartonów</span></div>
-              <div class="stat">4<span>regały</span></div>
+              <div class="stat" id="shelfCount">0<span>regały</span></div>
             </div>
             <div class="pallet" id="palletVisual"></div>
+            <button class="full" onclick="show('work');speakAskFirst()">Przejdź do pracy</button>
           </div>
         </div>
       </div>
@@ -125,9 +139,9 @@ button.red{background:linear-gradient(90deg,#d71920,#f37021);color:#fff}
             <div class="warning" id="warning"></div>
             <div class="row">
               <button class="red" onclick="toggleMic()" id="micBtn">Włącz mikrofon</button>
-              <button onclick="demoSayNext()">Demo: powiedz dobry EAN</button>
+              <button onclick="demoSayNext()">Demo: dobry EAN</button>
             </div>
-            <button class="full dark" onclick="demoSayWrong()">Demo: powiedz EAN z innego regału</button>
+            <button class="full dark" onclick="demoSayWrong()">Demo: EAN z innego regału</button>
           </div>
         </div>
         <div class="card">
@@ -157,10 +171,11 @@ button.red{background:linear-gradient(90deg,#d71920,#f37021);color:#fff}
 <div class="toast" id="toast"></div>
 
 <script>
-const PALLET_ITEMS = [{"id": 1, "ean": "4306517600000", "name": "Philips LED produkt 1", "shelf": "Philips LED", "shelfKey": "philips", "x": 10, "y": 18, "position": 1, "cartonSize": 6, "cartons": 3, "qty": 18, "done": false}, {"id": 2, "ean": "4306517600037", "name": "Ledvance produkt 2", "shelf": "Ledvance", "shelfKey": "ledvance", "x": 63, "y": 18, "position": 5, "cartonSize": 36, "cartons": 3, "qty": 108, "done": false}, {"id": 3, "ean": "4306517600074", "name": "Specjalne produkt 3", "shelf": "Specjalne", "shelfKey": "specjalne", "x": 10, "y": 64, "position": 61, "cartonSize": 6, "cartons": 4, "qty": 24, "done": false}, {"id": 4, "ean": "4306517600111", "name": "Radium produkt 4", "shelf": "Radium", "shelfKey": "radium", "x": 63, "y": 64, "position": 25, "cartonSize": 48, "cartons": 3, "qty": 144, "done": false}, {"id": 5, "ean": "4306517600148", "name": "Philips LED produkt 5", "shelf": "Philips LED", "shelfKey": "philips", "x": 10, "y": 18, "position": 8, "cartonSize": 6, "cartons": 2, "qty": 12, "done": false}, {"id": 6, "ean": "4306517600185", "name": "Ledvance produkt 6", "shelf": "Ledvance", "shelfKey": "ledvance", "x": 63, "y": 18, "position": 17, "cartonSize": 24, "cartons": 5, "qty": 120, "done": false}, {"id": 7, "ean": "4306517600222", "name": "Specjalne produkt 7", "shelf": "Specjalne", "shelfKey": "specjalne", "x": 10, "y": 64, "position": 3, "cartonSize": 12, "cartons": 2, "qty": 24, "done": false}, {"id": 8, "ean": "4306517600259", "name": "Radium produkt 8", "shelf": "Radium", "shelfKey": "radium", "x": 63, "y": 64, "position": 51, "cartonSize": 36, "cartons": 1, "qty": 36, "done": false}, {"id": 9, "ean": "4306517600296", "name": "Philips LED produkt 9", "shelf": "Philips LED", "shelfKey": "philips", "x": 10, "y": 18, "position": 1, "cartonSize": 36, "cartons": 1, "qty": 36, "done": false}, {"id": 10, "ean": "4306517600333", "name": "Ledvance produkt 10", "shelf": "Ledvance", "shelfKey": "ledvance", "x": 63, "y": 18, "position": 24, "cartonSize": 24, "cartons": 6, "qty": 144, "done": false}, {"id": 11, "ean": "4306517600370", "name": "Specjalne produkt 11", "shelf": "Specjalne", "shelfKey": "specjalne", "x": 10, "y": 64, "position": 3, "cartonSize": 6, "cartons": 1, "qty": 6, "done": false}, {"id": 12, "ean": "4306517600407", "name": "Radium produkt 12", "shelf": "Radium", "shelfKey": "radium", "x": 63, "y": 64, "position": 7, "cartonSize": 12, "cartons": 2, "qty": 24, "done": false}, {"id": 13, "ean": "4306517600444", "name": "Philips LED produkt 13", "shelf": "Philips LED", "shelfKey": "philips", "x": 10, "y": 18, "position": 44, "cartonSize": 24, "cartons": 4, "qty": 96, "done": false}, {"id": 14, "ean": "4306517600481", "name": "Ledvance produkt 14", "shelf": "Ledvance", "shelfKey": "ledvance", "x": 63, "y": 18, "position": 24, "cartonSize": 36, "cartons": 3, "qty": 108, "done": false}, {"id": 15, "ean": "4306517600518", "name": "Specjalne produkt 15", "shelf": "Specjalne", "shelfKey": "specjalne", "x": 10, "y": 64, "position": 29, "cartonSize": 6, "cartons": 3, "qty": 18, "done": false}, {"id": 16, "ean": "4306517600555", "name": "Radium produkt 16", "shelf": "Radium", "shelfKey": "radium", "x": 63, "y": 64, "position": 18, "cartonSize": 48, "cartons": 4, "qty": 192, "done": false}, {"id": 17, "ean": "4306517600592", "name": "Philips LED produkt 17", "shelf": "Philips LED", "shelfKey": "philips", "x": 10, "y": 18, "position": 44, "cartonSize": 48, "cartons": 6, "qty": 288, "done": false}, {"id": 18, "ean": "4306517600629", "name": "Ledvance produkt 18", "shelf": "Ledvance", "shelfKey": "ledvance", "x": 63, "y": 18, "position": 5, "cartonSize": 48, "cartons": 3, "qty": 144, "done": false}, {"id": 19, "ean": "4306517600666", "name": "Specjalne produkt 19", "shelf": "Specjalne", "shelfKey": "specjalne", "x": 10, "y": 64, "position": 61, "cartonSize": 36, "cartons": 6, "qty": 216, "done": false}, {"id": 20, "ean": "4306517600703", "name": "Radium produkt 20", "shelf": "Radium", "shelfKey": "radium", "x": 63, "y": 64, "position": 51, "cartonSize": 36, "cartons": 6, "qty": 216, "done": false}, {"id": 21, "ean": "4306517600740", "name": "Philips LED produkt 21", "shelf": "Philips LED", "shelfKey": "philips", "x": 10, "y": 18, "position": 44, "cartonSize": 48, "cartons": 4, "qty": 192, "done": false}, {"id": 22, "ean": "4306517600777", "name": "Ledvance produkt 22", "shelf": "Ledvance", "shelfKey": "ledvance", "x": 63, "y": 18, "position": 35, "cartonSize": 36, "cartons": 3, "qty": 108, "done": false}, {"id": 23, "ean": "4306517600814", "name": "Specjalne produkt 23", "shelf": "Specjalne", "shelfKey": "specjalne", "x": 10, "y": 64, "position": 14, "cartonSize": 6, "cartons": 6, "qty": 36, "done": false}, {"id": 24, "ean": "4306517600851", "name": "Radium produkt 24", "shelf": "Radium", "shelfKey": "radium", "x": 63, "y": 64, "position": 64, "cartonSize": 6, "cartons": 4, "qty": 24, "done": false}, {"id": 25, "ean": "4306517600888", "name": "Philips LED produkt 25", "shelf": "Philips LED", "shelfKey": "philips", "x": 10, "y": 18, "position": 13, "cartonSize": 24, "cartons": 2, "qty": 48, "done": false}, {"id": 26, "ean": "4306517600925", "name": "Ledvance produkt 26", "shelf": "Ledvance", "shelfKey": "ledvance", "x": 63, "y": 18, "position": 24, "cartonSize": 24, "cartons": 5, "qty": 120, "done": false}, {"id": 27, "ean": "4306517600962", "name": "Specjalne produkt 27", "shelf": "Specjalne", "shelfKey": "specjalne", "x": 10, "y": 64, "position": 44, "cartonSize": 6, "cartons": 6, "qty": 36, "done": false}, {"id": 28, "ean": "4306517600999", "name": "Radium produkt 28", "shelf": "Radium", "shelfKey": "radium", "x": 63, "y": 64, "position": 25, "cartonSize": 36, "cartons": 5, "qty": 180, "done": false}, {"id": 29, "ean": "4306517601036", "name": "Philips LED produkt 29", "shelf": "Philips LED", "shelfKey": "philips", "x": 10, "y": 18, "position": 44, "cartonSize": 6, "cartons": 2, "qty": 12, "done": false}, {"id": 30, "ean": "4306517601073", "name": "Ledvance produkt 30", "shelf": "Ledvance", "shelfKey": "ledvance", "x": 63, "y": 18, "position": 17, "cartonSize": 6, "cartons": 6, "qty": 36, "done": false}, {"id": 31, "ean": "4306517601110", "name": "Specjalne produkt 31", "shelf": "Specjalne", "shelfKey": "specjalne", "x": 10, "y": 64, "position": 14, "cartonSize": 6, "cartons": 3, "qty": 18, "done": false}, {"id": 32, "ean": "4306517601147", "name": "Radium produkt 32", "shelf": "Radium", "shelfKey": "radium", "x": 63, "y": 64, "position": 51, "cartonSize": 36, "cartons": 5, "qty": 180, "done": false}, {"id": 33, "ean": "4306517601184", "name": "Philips LED produkt 33", "shelf": "Philips LED", "shelfKey": "philips", "x": 10, "y": 18, "position": 13, "cartonSize": 6, "cartons": 6, "qty": 36, "done": false}];
-const SHELVES = [{"key": "philips", "name": "Philips LED", "x": 10, "y": 18, "positions": [1, 8, 13, 21, 44, 58, 69]}, {"key": "ledvance", "name": "Ledvance", "x": 63, "y": 18, "positions": [5, 12, 17, 24, 35, 41, 52]}, {"key": "specjalne", "name": "Specjalne", "x": 10, "y": 64, "positions": [3, 14, 29, 44, 61, 69]}, {"key": "radium", "name": "Radium", "x": 63, "y": 64, "positions": [7, 18, 25, 36, 51, 64]}];
+const ALL_PALLETS = {"MAG-260619-001": [{"id": "MAG-260619-001-1", "ean": "4306517601001", "name": "Philips LED 60W", "shelfKey": "philips", "shelf": "PHILIPS LED", "x": 7, "y": 16, "qty": 96, "cartons": 4, "cartonSize": 24, "position": 21, "done": false}, {"id": "MAG-260619-001-2", "ean": "4306517601002", "name": "Ledvance GU10", "shelfKey": "ledvance", "shelf": "LEDVANCE", "x": 66, "y": 16, "qty": 120, "cartons": 5, "cartonSize": 24, "position": 5, "done": false}, {"id": "MAG-260619-001-3", "ean": "4306517601003", "name": "Radium E14", "shelfKey": "radium", "shelf": "RADIUM", "x": 66, "y": 64, "qty": 72, "cartons": 3, "cartonSize": 24, "position": 18, "done": false}, {"id": "MAG-260619-001-4", "ean": "4306517601004", "name": "Specjalne Vintage E27", "shelfKey": "specjalne", "shelf": "SPECJALNE", "x": 7, "y": 64, "qty": 48, "cartons": 2, "cartonSize": 24, "position": 44, "done": false}, {"id": "MAG-260619-001-5", "ean": "4306517601005", "name": "Philips LED 75W", "shelfKey": "philips", "shelf": "PHILIPS LED", "x": 7, "y": 16, "qty": 96, "cartons": 4, "cartonSize": 24, "position": 44, "done": false}, {"id": "MAG-260619-001-6", "ean": "4306517601006", "name": "Ledvance LED 100W", "shelfKey": "ledvance", "shelf": "LEDVANCE", "x": 66, "y": 16, "qty": 48, "cartons": 2, "cartonSize": 24, "position": 35, "done": false}], "MAG-260619-002": [{"id": "MAG-260619-002-1", "ean": "4306517602001", "name": "Philips LED 40W", "shelfKey": "philips", "shelf": "PHILIPS LED", "x": 7, "y": 16, "qty": 144, "cartons": 6, "cartonSize": 24, "position": 8, "done": false}, {"id": "MAG-260619-002-2", "ean": "4306517602002", "name": "Specjalne Dekoracyjne", "shelfKey": "specjalne", "shelf": "SPECJALNE", "x": 7, "y": 64, "qty": 96, "cartons": 4, "cartonSize": 24, "position": 14, "done": false}, {"id": "MAG-260619-002-3", "ean": "4306517602003", "name": "Ledvance LED 60W", "shelfKey": "ledvance", "shelf": "LEDVANCE", "x": 66, "y": 16, "qty": 120, "cartons": 5, "cartonSize": 24, "position": 17, "done": false}, {"id": "MAG-260619-002-4", "ean": "4306517602004", "name": "Radium GU10", "shelfKey": "radium", "shelf": "RADIUM", "x": 66, "y": 64, "qty": 48, "cartons": 2, "cartonSize": 24, "position": 25, "done": false}, {"id": "MAG-260619-002-5", "ean": "4306517602005", "name": "Philips GU10", "shelfKey": "philips", "shelf": "PHILIPS LED", "x": 7, "y": 16, "qty": 72, "cartons": 3, "cartonSize": 24, "position": 58, "done": false}, {"id": "MAG-260619-002-6", "ean": "4306517602006", "name": "Ledvance Filament", "shelfKey": "ledvance", "shelf": "LEDVANCE", "x": 66, "y": 16, "qty": 48, "cartons": 2, "cartonSize": 24, "position": 52, "done": false}], "MAG-260619-003": [{"id": "MAG-260619-003-1", "ean": "4306517603001", "name": "Radium Techniczne", "shelfKey": "radium", "shelf": "RADIUM", "x": 66, "y": 64, "qty": 120, "cartons": 5, "cartonSize": 24, "position": 7, "done": false}, {"id": "MAG-260619-003-2", "ean": "4306517603002", "name": "Philips Hue", "shelfKey": "philips", "shelf": "PHILIPS LED", "x": 7, "y": 16, "qty": 96, "cartons": 4, "cartonSize": 24, "position": 69, "done": false}, {"id": "MAG-260619-003-3", "ean": "4306517603003", "name": "Specjalne Kuchenka", "shelfKey": "specjalne", "shelf": "SPECJALNE", "x": 7, "y": 64, "qty": 72, "cartons": 3, "cartonSize": 24, "position": 61, "done": false}, {"id": "MAG-260619-003-4", "ean": "4306517603004", "name": "Ledvance Classic", "shelfKey": "ledvance", "shelf": "LEDVANCE", "x": 66, "y": 16, "qty": 96, "cartons": 4, "cartonSize": 24, "position": 24, "done": false}, {"id": "MAG-260619-003-5", "ean": "4306517603005", "name": "Philips LED 100W", "shelfKey": "philips", "shelf": "PHILIPS LED", "x": 7, "y": 16, "qty": 120, "cartons": 5, "cartonSize": 24, "position": 13, "done": false}, {"id": "MAG-260619-003-6", "ean": "4306517603006", "name": "Specjalne Lodówka", "shelfKey": "specjalne", "shelf": "SPECJALNE", "x": 7, "y": 64, "qty": 96, "cartons": 4, "cartonSize": 24, "position": 3, "done": false}]};
+const SHELVES = [{"key": "philips", "name": "PHILIPS LED", "x": 7, "y": 16, "positions": [1, 8, 13, 21, 44, 58, 69]}, {"key": "ledvance", "name": "LEDVANCE", "x": 66, "y": 16, "positions": [5, 12, 17, 24, 35, 41, 52]}, {"key": "specjalne", "name": "SPECJALNE", "x": 7, "y": 64, "positions": [3, 14, 29, 44, 61, 69]}, {"key": "radium", "name": "RADIUM", "x": 66, "y": 64, "positions": [7, 18, 25, 36, 51, 64]}];
+let PALLET_ITEMS=[];
+let activePallet='';
 let currentShelfKey=null;
-let started=false;
 let scannedCount=0;
 let listening=false, recognition=null, restartTimer=null;
 const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
@@ -172,50 +187,62 @@ function show(id){
   document.querySelectorAll('.nav button').forEach((b,i)=>b.classList.toggle('active',order[i]===id));
 }
 
+function setPal(n){document.getElementById('palletNo').value=n;loadPallet();}
+
 function startGame(){
-  speak('Rozpoczynamy grę. Podaj numer palety.');
+  speak('Rozpoczynamy grę. Podaj numer palety albo wybierz jedną z testowych palet.');
   show('start');
   document.getElementById('palletNo').focus();
 }
 
+function cloneItems(rows){return JSON.parse(JSON.stringify(rows||[]));}
+
 function loadPallet(){
-  started=true;
-  currentShelfKey=null;
-  scannedCount=0;
-  PALLET_ITEMS.forEach(x=>x.done=false);
+  const n=document.getElementById('palletNo').value.trim().toUpperCase();
+  if(!ALL_PALLETS[n]){toast('Nie ma takiej palety demo');speak('Nie ma takiej palety demo');return;}
+  activePallet=n;
+  PALLET_ITEMS=cloneItems(ALL_PALLETS[n]);
+  currentShelfKey=null;scannedCount=0;
   renderAll();
-  speak('Paleta wczytana. Rozplanowałem trasę na sklepie. Podaj pierwszy EAN z góry palety.');
+  document.getElementById('topBadge').textContent=n;
+  renderPaper();
+  speak('Paleta '+n+' wczytana. Rozplanowałem trasę na sklepie. Podaj pierwszy EAN z góry palety.');
   toast('Paleta wczytana. Trasa gotowa.');
   show('mapScreen');
+}
+
+function renderPaper(){
+  if(!activePallet) return;
+  const total=PALLET_ITEMS.reduce((s,x)=>s+x.qty,0);
+  let txt='PZ-2026-06-19-0047\nDostawca: Centrum dystrybucyjne\nPaleta: '+activePallet+'\nRazem: '+total+' szt.\n\nEAN              Produkt                 Kart.  Szt.\n';
+  PALLET_ITEMS.forEach(x=>{txt+=x.ean+'   '+x.name.padEnd(22,' ').slice(0,22)+'   '+String(x.cartons).padStart(2,' ')+'    '+x.qty+'\n';});
+  document.getElementById('paper').textContent=txt;
 }
 
 function grouped(){
   const g={};
   PALLET_ITEMS.forEach(it=>{
     if(!g[it.shelfKey])g[it.shelfKey]={key:it.shelfKey,name:it.shelf,items:[],qty:0,x:it.x,y:it.y};
-    g[it.shelfKey].items.push(it);
-    g[it.shelfKey].qty+=it.qty;
+    g[it.shelfKey].items.push(it);g[it.shelfKey].qty+=it.qty;
   });
   return Object.values(g);
 }
 
-function renderAll(){
-  renderStats();
-  renderMap();
-  renderPallet();
-  renderTask();
-}
+function renderAll(){renderStats();renderMap();renderPallet();renderTask();}
 
 function renderStats(){
   const left=PALLET_ITEMS.filter(x=>!x.done);
   const leftQty=left.reduce((s,x)=>s+x.qty,0);
   const cartonCount=PALLET_ITEMS.reduce((s,x)=>s+x.cartons,0);
+  const shelfCount=new Set(PALLET_ITEMS.map(x=>x.shelfKey)).size;
   document.getElementById('leftUnits').innerHTML=leftQty+'<span>sztuk zostało</span>';
   document.getElementById('leftEans').innerHTML=left.length+'<span>EAN zostało</span>';
   document.getElementById('cartons').innerHTML=cartonCount+'<span>kartonów</span>';
-  const pct=Math.round((3000-leftQty)/3000*100);
+  document.getElementById('shelfCount').innerHTML=shelfCount+'<span>regały</span>';
+  const total=PALLET_ITEMS.reduce((s,x)=>s+x.qty,0)||1;
+  const pct=Math.round((total-leftQty)/total*100);
   document.getElementById('bar').style.width=pct+'%';
-  document.getElementById('progressText').textContent='Postęp: '+(3000-leftQty)+'/3000 sztuk ('+pct+'%)';
+  document.getElementById('progressText').textContent='Postęp: '+(total-leftQty)+'/'+total+' sztuk ('+pct+'%)';
 }
 
 function renderMap(){
@@ -226,8 +253,8 @@ function renderMap(){
     const grp=groups.find(g=>g.key===s.key);
     const left=grp?grp.items.filter(x=>!x.done).length:0;
     const div=document.createElement('div');
-    div.className='shelf '+(currentShelfKey===s.key?'active ':'')+(left===0?'done':'');
-    div.style.left=s.x+'%'; div.style.top=s.y+'%';
+    div.className='shelf '+(currentShelfKey===s.key?'active ':'')+(left===0&&grp?'done':'');
+    div.style.left=s.x+'%';div.style.top=s.y+'%';
     div.innerHTML=s.name+'<br><span class="small">'+left+' EAN</span>';
     map.appendChild(div);
   }
@@ -237,7 +264,7 @@ function renderMap(){
 function drawPath(){
   const svg=document.getElementById('pathSvg');
   const groups=grouped().filter(g=>g.items.some(x=>!x.done));
-  const points=[{x:50,y:94}].concat(groups.map(g=>({x:g.x+13,y:g.y+9,key:g.key})));
+  const points=[{x:50,y:94}].concat(groups.map(g=>({x:g.x+13,y:g.y+9})));
   let html='';
   for(let i=0;i<points.length-1;i++)html+=`<line x1="${points[i].x}" y1="${points[i].y}" x2="${points[i+1].x}" y2="${points[i+1].y}"></line>`;
   for(const p of points)html+=`<circle cx="${p.x}" cy="${p.y}" r="2.5"></circle>`;
@@ -245,69 +272,52 @@ function drawPath(){
 }
 
 function renderPallet(){
-  const visual=document.getElementById('palletVisual');
-  visual.innerHTML='';
-  const maxBoxes=80;
-  for(let i=0;i<Math.min(maxBoxes,PALLET_ITEMS.length);i++){
-    const it=PALLET_ITEMS[i];
-    const x=(i%10)*10+1, y=Math.floor(i/10)*26+7;
+  const visual=document.getElementById('palletVisual');visual.innerHTML='';
+  PALLET_ITEMS.forEach((it,i)=>{
+    const x=(i%3)*31+3, y=Math.floor(i/3)*54+8;
     const div=document.createElement('div');
     div.className='box '+it.shelfKey+(it.done?' done':'');
-    div.style.left=x+'%'; div.style.top=y+'px'; div.style.width=(8+Math.min(13,it.cartons*2))+'%'; div.style.height='21px';
-    div.textContent=it.done?'OK':it.cartons+'k';
+    div.style.left=x+'%';div.style.top=y+'px';div.style.width='27%';div.style.height='44px';
+    div.textContent=it.done?'OK':it.cartons+' kart.';
     visual.appendChild(div);
-  }
+  });
 }
 
-function currentShelfItems(){
-  if(!currentShelfKey)return [];
-  return PALLET_ITEMS.filter(x=>x.shelfKey===currentShelfKey && !x.done);
-}
+function currentShelfItems(){return currentShelfKey?PALLET_ITEMS.filter(x=>x.shelfKey===currentShelfKey&&!x.done):[];}
 
 function renderTask(){
-  const task=document.getElementById('task');
-  const list=document.getElementById('currentList');
-  const warning=document.getElementById('warning');
+  const task=document.getElementById('task'), list=document.getElementById('currentList'), warning=document.getElementById('warning');
   warning.style.display='none';
   const left=PALLET_ITEMS.filter(x=>!x.done);
+  if(!PALLET_ITEMS.length){task.innerHTML='<p class="small">Najpierw wczytaj paletę.</p>';list.innerHTML='';return;}
   if(left.length===0){
     task.innerHTML='<div class="big">Paleta gotowa</div><p class="small">Wszystkie produkty zostały odhaczone.</p>';
     list.innerHTML='';
-    document.getElementById('summaryText').textContent='Rozłożono 3000 sztuk z palety '+document.getElementById('palletNo').value+'.';
+    document.getElementById('summaryText').textContent='Rozłożono paletę '+activePallet+'.';
     return;
   }
   if(!currentShelfKey){
-    task.innerHTML='<p class="small">Podaj EAN z góry palety. Apka wybierze regał i poprowadzi Cię na miejsce.</p><div class="eanbox">Czekam na pierwszy EAN</div>';
+    task.innerHTML='<p class="small">Podaj EAN z góry palety. Apka wybierze regał i narysuje aktywny punkt na mapie.</p><div class="eanbox">Czekam na pierwszy EAN</div>';
     list.innerHTML='<p class="small">Najpierw podaj EAN z góry palety.</p>';
     return;
   }
   const items=currentShelfItems();
   const shelfName=PALLET_ITEMS.find(x=>x.shelfKey===currentShelfKey)?.shelf||currentShelfKey;
-  if(items.length===0){
-    currentShelfKey=null;
-    renderTask();
-    return;
-  }
   const next=items[0];
-  task.innerHTML=`<p class="small">Jedź / zostań przy regale:</p><div class="big">${shelfName}</div><p class="small">Na tym regale zostało: <b>${items.length} EAN</b>, razem <b>${items.reduce((s,x)=>s+x.qty,0)} szt.</b></p><div class="eanbox">Następny EAN: ${next.ean}</div>`;
-  list.innerHTML=items.slice(0,14).map((it,i)=>`<div class="product ${i===0?'next':''}"><b>${it.name}</b><br><span class="small">EAN: ${it.ean} • pozycja ${it.position} • ${it.cartons} kart. = ${it.qty} szt.</span></div>`).join('')+(items.length>14?'<p class="small">...i kolejne pozycje.</p>':'');
+  task.innerHTML=`<p class="small">Jedź / zostań przy regale:</p><div class="big">${shelfName}</div><p class="small">Na tym regale zostało: <b>${items.length} EAN</b>, razem <b>${items.reduce((s,x)=>s+x.qty,0)} szt.</b></p><div class="eanbox">Następny EAN: ${next?next.ean:'regał gotowy'}</div>`;
+  list.innerHTML=items.map((it,i)=>`<div class="product ${i===0?'next':''}"><b>${it.name}</b><br><span class="small">EAN: ${it.ean} • poz. ${it.position} • ${it.cartons} kart. = ${it.qty} szt.</span></div>`).join('');
 }
 
 function normalizeDigits(text){
   const map={'zero':'0','jeden':'1','jedna':'1','dwa':'2','dwie':'2','trzy':'3','cztery':'4','pięć':'5','piec':'5','sześć':'6','szesc':'6','siedem':'7','osiem':'8','dziewięć':'9','dziewiec':'9'};
-  let out='';
-  String(text||'').toLowerCase().split(/\s+/).forEach(w=>out += map[w] || w.replace(/\D/g,''));
-  return out;
+  let out='';String(text||'').toLowerCase().split(/\s+/).forEach(w=>out+=map[w]||w.replace(/\D/g,''));return out;
 }
 
 function handleEAN(raw){
   const digits=normalizeDigits(raw);
-  if(!digits || digits.length<2)return;
-  const item=PALLET_ITEMS.find(x=>!x.done && x.ean.endsWith(digits));
-  if(!item){
-    sayAndWarn('Nie znalazłem tego EAN-u na tej palecie.');
-    return;
-  }
+  if(!digits||digits.length<2)return;
+  const item=PALLET_ITEMS.find(x=>!x.done&&x.ean.endsWith(digits));
+  if(!item){sayAndWarn('Nie znalazłem tego EAN-u na tej palecie.');return;}
   if(!currentShelfKey){
     currentShelfKey=item.shelfKey;
     speak('Ten towar idzie na regał '+item.shelf+'. Jedź do regału. Na tym regale jest '+currentShelfItems().length+' artykułów z palety.');
@@ -316,68 +326,32 @@ function handleEAN(raw){
     sayAndWarn('Nie tutaj. Ten EAN idzie na '+item.shelf+'. Zostań przy obecnym regale, masz tu jeszcze '+still+' artykułów.');
     return;
   }
-  item.done=true;
-  scannedCount++;
+  item.done=true;scannedCount++;
   const leftHere=currentShelfItems().length;
-  if(scannedCount%5===0 && leftHere>0){
-    speak('Dobrze. Na tym regale zostało jeszcze '+leftHere+' artykułów.');
-  } else if(leftHere>0){
-    speak('Odhaczono. Zostało tutaj '+leftHere+'.');
-  } else {
-    speak('Regał zakończony. Podaj kolejny EAN z góry palety.');
-    currentShelfKey=null;
-  }
+  if(scannedCount%5===0&&leftHere>0)speak('Dobrze. Na tym regale zostało jeszcze '+leftHere+' artykułów.');
+  else if(leftHere>0)speak('Odhaczono. Zostało tutaj '+leftHere+'.');
+  else{speak('Regał zakończony. Podaj kolejny EAN z góry palety.');currentShelfKey=null;}
   renderAll();
-  if(PALLET_ITEMS.every(x=>x.done)){
-    speak('Paleta zakończona. Misja wykonana.');
-    show('summary');
-  }
+  if(PALLET_ITEMS.every(x=>x.done)){speak('Paleta zakończona. Misja wykonana.');show('summary');}
 }
 
-function sayAndWarn(text){
-  const w=document.getElementById('warning');
-  w.textContent=text;
-  w.style.display='block';
-  speak(text);
-  toast(text);
-}
+function sayAndWarn(text){const w=document.getElementById('warning');w.textContent=text;w.style.display='block';speak(text);toast(text);}
+function demoSayNext(){let item=currentShelfKey?currentShelfItems()[0]:PALLET_ITEMS.find(x=>!x.done);if(item)handleEAN(item.ean);}
+function demoSayWrong(){if(!currentShelfKey){toast('Najpierw podaj dobry pierwszy EAN.');return;}const wrong=PALLET_ITEMS.find(x=>!x.done&&x.shelfKey!==currentShelfKey);if(wrong)handleEAN(wrong.ean);}
+function speakAskFirst(){speak('Podaj pierwszy EAN z góry palety.');}
 
-function demoSayNext(){
-  let item=null;
-  if(currentShelfKey)item=currentShelfItems()[0];
-  if(!item)item=PALLET_ITEMS.find(x=>!x.done);
-  if(item)handleEAN(item.ean);
-}
-
-function demoSayWrong(){
-  if(!currentShelfKey){toast('Najpierw podaj dobry pierwszy EAN.');return;}
-  const wrong=PALLET_ITEMS.find(x=>!x.done && x.shelfKey!==currentShelfKey);
-  if(wrong)handleEAN(wrong.ean);
-}
-
-function toggleMic(){
-  if(listening)stopMic(); else startMic();
-}
-
+function toggleMic(){if(listening)stopMic();else startMic();}
 function startMic(){
-  if(!SR){alert('Mikrofon działa w Chrome przez HTTPS. Do lokalnego testu użyj przycisków demo.');return;}
+  if(!SR){alert('Mikrofon działa w Chrome przez HTTPS. Do testu użyj przycisków demo.');return;}
   if(recognition)try{recognition.abort();}catch(e){}
-  recognition=new SR(); recognition.lang='pl-PL'; recognition.continuous=false; recognition.interimResults=true; recognition.maxAlternatives=3;
+  recognition=new SR();recognition.lang='pl-PL';recognition.continuous=false;recognition.interimResults=true;recognition.maxAlternatives=3;
   recognition.onstart=()=>{listening=true;updateMic(true);};
-  recognition.onresult=(e)=>{
-    let final='', interim='';
-    for(let i=e.resultIndex;i<e.results.length;i++){const t=e.results[i][0].transcript;if(e.results[i].isFinal)final+=t;else interim+=t;}
-    if(final)handleEAN(final);
-  };
+  recognition.onresult=(e)=>{let final='';for(let i=e.resultIndex;i<e.results.length;i++)if(e.results[i].isFinal)final+=e.results[i][0].transcript;if(final)handleEAN(final);};
   recognition.onerror=()=>scheduleRestart(400);
   recognition.onend=()=>{if(listening)scheduleRestart(250);};
   try{recognition.start();}catch(e){scheduleRestart(500);}
 }
-
-function stopMic(){
-  listening=false; clearTimeout(restartTimer); try{recognition&&recognition.abort();}catch(e){} updateMic(false);
-}
-
+function stopMic(){listening=false;clearTimeout(restartTimer);try{recognition&&recognition.abort();}catch(e){}updateMic(false);}
 function scheduleRestart(d){clearTimeout(restartTimer);if(listening)restartTimer=setTimeout(()=>startMic(),d);}
 function updateMic(on){document.getElementById('micDot').className='dot '+(on?'on':'');document.getElementById('micStatus').textContent=on?'Nasłuchiwanie aktywne':'Mikrofon wyłączony';document.getElementById('micBtn').textContent=on?'Zatrzymaj mikrofon':'Włącz mikrofon';}
 
@@ -387,8 +361,6 @@ if(window.speechSynthesis){pickVoice();speechSynthesis.onvoiceschanged=pickVoice
 function speak(text){if(!window.speechSynthesis)return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(String(text).replace(/_/g,' '));u.lang='pl-PL';u.rate=.96;if(plVoice)u.voice=plVoice;speechSynthesis.speak(u);}
 function toast(t){const el=document.getElementById('toast');el.textContent=t;el.style.display='block';setTimeout(()=>el.style.display='none',2200);}
 function resetAll(){currentShelfKey=null;scannedCount=0;PALLET_ITEMS.forEach(x=>x.done=false);renderAll();show('start');}
-
-renderAll();
 </script>
 </body>
 </html>
