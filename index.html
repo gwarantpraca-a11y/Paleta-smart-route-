@@ -1721,6 +1721,232 @@ function loadSupabaseCache(){
 
 
 // === SMART ROUTE: eksperymentalna gałąź gry ===
+const SMART_DEMO_PALLET = [
+  {
+    "ean": "8719514324213",
+    "shelf_key": "philips",
+    "shelf_name": "Philips LED",
+    "position": "1",
+    "cartons": 1,
+    "name": "Phillips str 1"
+  },
+  {
+    "ean": "8719514324114",
+    "shelf_key": "philips",
+    "shelf_name": "Philips LED",
+    "position": "7",
+    "cartons": 2,
+    "name": "Phillips str 1"
+  },
+  {
+    "ean": "8720169310797",
+    "shelf_key": "philips",
+    "shelf_name": "Philips LED",
+    "position": "13",
+    "cartons": 3,
+    "name": "Phillips str 1"
+  },
+  {
+    "ean": "8720169187658",
+    "shelf_key": "philips",
+    "shelf_name": "Philips LED",
+    "position": "24",
+    "cartons": 4,
+    "name": "Phillips str 1"
+  },
+  {
+    "ean": "8718699763459",
+    "shelf_key": "philips",
+    "shelf_name": "Philips LED",
+    "position": "38",
+    "cartons": 1,
+    "name": "Phillips str 1"
+  },
+  {
+    "ean": "8720169301634",
+    "shelf_key": "philips",
+    "shelf_name": "Philips LED",
+    "position": "55",
+    "cartons": 2,
+    "name": "Phillips str 2"
+  },
+  {
+    "ean": "4058075609754",
+    "shelf_key": "ledvance",
+    "shelf_name": "Ledvance",
+    "position": "13",
+    "cartons": 3,
+    "name": "Ledvance"
+  },
+  {
+    "ean": "4058075778610",
+    "shelf_key": "ledvance",
+    "shelf_name": "Ledvance",
+    "position": "18",
+    "cartons": 4,
+    "name": "Ledvance"
+  },
+  {
+    "ean": "4058075609815",
+    "shelf_key": "ledvance",
+    "shelf_name": "Ledvance",
+    "position": "23",
+    "cartons": 1,
+    "name": "Ledvance"
+  },
+  {
+    "ean": "4058075778818",
+    "shelf_key": "ledvance",
+    "shelf_name": "Ledvance",
+    "position": "31",
+    "cartons": 2,
+    "name": "Ledvance"
+  },
+  {
+    "ean": "4058075778672",
+    "shelf_key": "ledvance",
+    "shelf_name": "Ledvance",
+    "position": "42",
+    "cartons": 3,
+    "name": "Ledvance"
+  },
+  {
+    "ean": "4058075528277",
+    "shelf_key": "ledvance",
+    "shelf_name": "Ledvance",
+    "position": "49",
+    "cartons": 4,
+    "name": "Ledvance"
+  },
+  {
+    "ean": "4003558014176",
+    "shelf_key": "radium",
+    "shelf_name": "Radium",
+    "position": "3",
+    "cartons": 1,
+    "name": "Radius Led"
+  },
+  {
+    "ean": "4003558011489",
+    "shelf_key": "radium",
+    "shelf_name": "Radium",
+    "position": "9",
+    "cartons": 2,
+    "name": "Radius Led"
+  },
+  {
+    "ean": "4003558014169",
+    "shelf_key": "radium",
+    "shelf_name": "Radium",
+    "position": "15",
+    "cartons": 3,
+    "name": "Radius Led"
+  },
+  {
+    "ean": "4003558012257",
+    "shelf_key": "radium",
+    "shelf_name": "Radium",
+    "position": "22",
+    "cartons": 4,
+    "name": "Radius Led"
+  },
+  {
+    "ean": "4020058833311",
+    "shelf_key": "specjale",
+    "shelf_name": "Specjalne",
+    "position": "5",
+    "cartons": 1,
+    "name": "specjale"
+  },
+  {
+    "ean": "4306517592697",
+    "shelf_key": "specjale",
+    "shelf_name": "Specjalne",
+    "position": "14",
+    "cartons": 2,
+    "name": "specjale"
+  },
+  {
+    "ean": "4306517610371",
+    "shelf_key": "specjale",
+    "shelf_name": "Specjalne",
+    "position": "27",
+    "cartons": 3,
+    "name": "specjale"
+  },
+  {
+    "ean": "8719501383211",
+    "shelf_key": "specjale",
+    "shelf_name": "Specjalne",
+    "position": "39",
+    "cartons": 4,
+    "name": "specjale"
+  },
+  {
+    "ean": "295855",
+    "shelf_key": "sylvania",
+    "shelf_name": "Sylvania",
+    "position": "2",
+    "cartons": 1,
+    "name": "Sylvania"
+  },
+  {
+    "ean": "296043",
+    "shelf_key": "sylvania",
+    "shelf_name": "Sylvania",
+    "position": "10",
+    "cartons": 2,
+    "name": "Sylvania"
+  },
+  {
+    "ean": "8719514440999",
+    "shelf_key": "philips_hue",
+    "shelf_name": "Philips Hue",
+    "position": "4",
+    "cartons": 3,
+    "name": "Phillips Hue"
+  },
+  {
+    "ean": "8719514343009",
+    "shelf_key": "philips_hue",
+    "shelf_name": "Philips Hue",
+    "position": "11",
+    "cartons": 4,
+    "name": "Phillips Hue"
+  },
+  {
+    "ean": "4306517598198",
+    "shelf_key": "flair",
+    "shelf_name": "Flair",
+    "position": "6",
+    "cartons": 1,
+    "name": "Flair str 1"
+  },
+  {
+    "ean": "4306516560400",
+    "shelf_key": "flair",
+    "shelf_name": "Flair",
+    "position": "16",
+    "cartons": 2,
+    "name": "Flair str 1"
+  },
+  {
+    "ean": "8720169254626",
+    "shelf_key": "jarzeniowki",
+    "shelf_name": "Jarzeniówki",
+    "position": "8",
+    "cartons": 3,
+    "name": "Jarzeniowki str 1"
+  },
+  {
+    "ean": "5410288292779",
+    "shelf_key": "jarzeniowki",
+    "shelf_name": "Jarzeniówki",
+    "position": "19",
+    "cartons": 4,
+    "name": "Jarzeniowki str 1"
+  }
+];
 let smartPallet=[], smartActiveShelf=null, smartStartedAt=null, smartTimerId=null;
 function smartEl(id){return document.getElementById(id);}
 function smartShelfName(key){return shelfLabel(key,SHELVES[key]?.label||key);}
@@ -1739,7 +1965,7 @@ function smartItemsFromCurrentDb(){
 function smartCreatePallet(){
   const source=smartItemsFromCurrentDb();
   if(!source.length){smartEl('smart-game-status').textContent='Najpierw muszą załadować się dane regałów.';return;}
-  smartPallet=source.sort(()=>Math.random()-.5).slice(0,28).map((it,i)=>({...it,layer:i+1,cartons:1+Math.floor(Math.random()*4),done:false}));
+  smartPallet=SMART_DEMO_PALLET.map((demo,i)=>{const live=source.find(x=>x.ean===demo.ean)||demo;return {...live,shelf_key:demo.shelf_key,shelf_name:demo.shelf_name,position:demo.position,name:demo.name,layer:i+1,cartons:demo.cartons,done:false};});
   smartActiveShelf=null;smartStartedAt=null;clearInterval(smartTimerId);
   const no='MAG-'+new Date().toISOString().slice(2,10).replaceAll('-','')+'-'+String(Math.floor(Math.random()*900)+100);
   smartEl('smart-pallet-no').textContent=no;smartEl('smart-total-items').textContent=smartPallet.length;smartEl('smart-total-cartons').textContent=smartPallet.reduce((s,x)=>s+x.cartons,0);smartEl('smart-total-shelves').textContent=new Set(smartPallet.map(x=>x.shelf_key)).size;
