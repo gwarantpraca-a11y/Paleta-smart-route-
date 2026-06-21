@@ -1,0 +1,48 @@
+{
+  "count": 482,
+  "real_images": 45,
+  "work_thumbnails": 437,
+  "with_any_image": 482,
+  "shelves": {
+    "Flair": {
+      "count": 86,
+      "real": 0,
+      "work": 86
+    },
+    "Jarzeniówki": {
+      "count": 63,
+      "real": 0,
+      "work": 63
+    },
+    "Ledvance": {
+      "count": 53,
+      "real": 45,
+      "work": 8
+    },
+    "Philips LED": {
+      "count": 69,
+      "real": 0,
+      "work": 69
+    },
+    "Philips Hue": {
+      "count": 36,
+      "real": 0,
+      "work": 36
+    },
+    "Radium": {
+      "count": 64,
+      "real": 0,
+      "work": 64
+    },
+    "Specjalne": {
+      "count": 69,
+      "real": 0,
+      "work": 69
+    },
+    "Sylvania": {
+      "count": 42,
+      "real": 0,
+      "work": 42
+    }
+  }
+}
