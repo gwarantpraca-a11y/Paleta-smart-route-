@@ -1,0 +1,20 @@
+[
+  {
+    "ean": "4306517597832",
+    "status": "not_found",
+    "tried": 7,
+    "candidates": []
+  },
+  {
+    "ean": "4306517597856",
+    "status": "not_found",
+    "tried": 7,
+    "candidates": []
+  },
+  {
+    "ean": "4306517604998",
+    "status": "not_found",
+    "tried": 7,
+    "candidates": []
+  }
+]
